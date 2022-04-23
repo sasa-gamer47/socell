@@ -1,6 +1,5 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 
 const Home: NextPage = () => {
   return (
@@ -9,9 +8,10 @@ const Home: NextPage = () => {
         <title>Socell | Home</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1>Hello, Socell says to you!!</h1>
+      <h1>Hello, Socell says to you!</h1>
     </div>
   )
 }
 
 export default Home
+
