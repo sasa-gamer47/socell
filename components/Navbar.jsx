@@ -12,7 +12,7 @@ const Navbar = () => {
                 <div>Loading...</div>
             )}
             {!isLoading && (
-                <div>
+                <div className='fixed w-full h-20 bg-yellow-300 drop-shadow-lg'>
                     Navbar
                 </div>
             )}
