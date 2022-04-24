@@ -1,14 +1,23 @@
 import type { NextPage } from 'next'
+import { useUser } from '@auth0/nextjs-auth0'
 import Head from 'next/head'
+import { Navbar } from '../components/'
 
 const Home: NextPage = () => {
+
+  const { user, isLoading } = useUser()
+
+  
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className="min-h-screen">
       <Head>
         <title>Socell | Home</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1>Hello, Socell says to you!</h1>
+      <Navbar />
+      {/* <img src={user?.picture}  /> */}
+      {/* <h1>Hello {user?.name || 'undefined'}, Socell says to you!</h1> */}
     </div>
   )
 }
