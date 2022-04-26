@@ -3,4 +3,7 @@ module.exports = {
   reactStrictMode: true,
   future: { webpack5: true },
   fallback: true,
+  images: {
+    domains: ['lh3.googleusercontent.com'],
+  },
 }

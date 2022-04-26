@@ -5,6 +5,7 @@ import { Navbar, DownNavbar } from '../components/'
 import { useEffect } from 'react'
 import dbConnect from '../utils/dbConnect'
 import User from '../models/User'
+import { Menu } from '@headlessui/react'
 
 
 const Home: NextPage = () => {
