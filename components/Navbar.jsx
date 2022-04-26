@@ -14,7 +14,7 @@ const Navbar = () => {
                 <div>Loading...</div>
             )}
             {!isLoading && (
-                <nav className='fixed w-full h-20 bg-yellow-300 drop-shadow-lg grid '>
+                <nav className='fixed w-full h-14 dark:bg-gray-900 dark:text-white bg-yellow-300 drop-shadow-lg grid '>
                     [logo]
                 </nav>
             )}
