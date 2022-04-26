@@ -1,7 +1,6 @@
 import React from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import Image from 'next/image'
-import Dropdown from './Dropdown'
 import { Menu } from '@headlessui/react'
 
 const Navbar = () => {
@@ -20,11 +19,10 @@ const Navbar = () => {
                     <div>
                         [logo]
                     </div>
-                    <div className='flex items-center justify-center'>
+                    {/* <div className='flex items-center justify-center'>
                         <div className='overflow-hidden h-12 w-12 rounded-full'>
                             {user && (
                                 <>
-                                    {/* <Dropdown items={['Profile', 'Settings', 'Logout']} /> */}
                                     <Menu>
                                         <Menu.Button>
                                             <Image draggable='false' src={user.picture} width='48' height='48' fill='responsive' />
@@ -45,7 +43,7 @@ const Navbar = () => {
                         {!user && (
                             <a href="/api/auth/login">Log in</a>
                         )}
-                    </div>
+                    </div> */}
                 </nav>
             )}
         </>
