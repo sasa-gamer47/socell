@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import { useUser } from '@auth0/nextjs-auth0'
 import Head from 'next/head'
-import { Navbar } from '../components/'
+import { Navbar, DownNavbar } from '../components/'
 
 const Home: NextPage = () => {
 
@@ -16,6 +16,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
+      <DownNavbar />
       {/* <img src={user?.picture}  /> */}
       {/* <h1>Hello {user?.name || 'undefined'}, Socell says to you!</h1> */}
     </div>

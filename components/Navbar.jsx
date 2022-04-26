@@ -6,15 +6,17 @@ const Navbar = () => {
 
     const { user, isLoading } = useUser()
 
+    console.log(user);
+
     return (
         <>
             {isLoading && (
                 <div>Loading...</div>
             )}
             {!isLoading && (
-                <div className='fixed w-full h-20 bg-yellow-300 drop-shadow-lg'>
-                    Navbar
-                </div>
+                <nav className='fixed w-full h-20 bg-yellow-300 drop-shadow-lg grid '>
+                    [logo]
+                </nav>
             )}
         </>
     )
