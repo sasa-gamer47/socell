@@ -19,7 +19,7 @@ const Navbar = () => {
                     <div>
                         [logo]
                     </div>
-                    {/* <div className='flex items-center justify-center'>
+                    <div className='flex items-center justify-center'>
                         <div className='overflow-hidden h-12 w-12 rounded-full'>
                             {user && (
                                 <>
@@ -43,7 +43,7 @@ const Navbar = () => {
                         {!user && (
                             <a href="/api/auth/login">Log in</a>
                         )}
-                    </div> */}
+                    </div>
                 </nav>
             )}
         </>
