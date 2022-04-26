@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     },
     given_name: {
         type: String,
-        required: true
+        // required: true
     },
     email: {
         type: String,
@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     },
     locale: {
         type: String,
-        required: true
+        // required: true
     },
     picture: {
         type: String,
@@ -34,11 +34,11 @@ const userSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    // posts: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Post',
-    //     required: true,
-    // }
+    posts: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post',
+        // required: true,
+    }
 });
 
 module.exports = mongoose.models.User || mongoose.model('User', userSchema)
