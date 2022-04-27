@@ -1,10 +1,9 @@
 import React from 'react'
-import { useAuth0 } from '@auth0/auth0-react'
-import useSWR from 'swr'
+import { useUser } from '@auth0/nextjs-auth0'
 
-const test = ({ user }) => {
+const test = () => {
 
-    console.log(user);
+    const { user, isLoading } = useUser()
 
     // const { user, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0()
 
@@ -51,6 +50,9 @@ const test = ({ user }) => {
                 <a href="/api/logout">Log out</a> */}
                 <a href="/api/auth/login">Log in</a>
                 <a href="/api/auth/logout">Log out</a>
+
+                {user && (<p>{user.name} welcome!!!</p>)}
+                {!user && (<p>You are not logged in</p>)}
             </>
         )
     // }
