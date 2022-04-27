@@ -8,8 +8,8 @@
 "parser": "babel-eslint",
 "extends": [
     "eslint:recommended",
-    // "airbnb",
-    // "airbnb/hooks",
+    "airbnb",
+    "airbnb/hooks",
     "plugin:react/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
