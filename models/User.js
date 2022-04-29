@@ -35,10 +35,11 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     posts: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: [mongoose.Schema.Types.ObjectId],
         ref: 'Post',
         // required: true,
     }
 });
+
 
 module.exports = mongoose.models.User || mongoose.model('User', userSchema)

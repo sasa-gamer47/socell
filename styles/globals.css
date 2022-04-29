@@ -3,9 +3,22 @@
 @tailwind utilities;
 
 .mobile-navbar {
-    grid-template-columns: 4fr 1fr;
+    grid-template-columns: 3fr 1fr 1fr;
 }
 
 .navbar {
+    grid-template-columns: 14fr 1fr 2fr;
     /* puts template-grid in here */
+}
+
+.down-navbar {
+    box-shadow: 0 -10px 8px rgb(0 0 0 / 0.04), 0 -4px 3px rgb(0 0 0 / 0.1);
+}
+
+/* body.dark {
+    background: #000;
+} */
+
+.dark {
+    background: hsl(0, 0%, 11%);
 }

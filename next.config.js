@@ -6,10 +6,30 @@ module.exports = {
   images: {
     domains: [
       'lh3.googleusercontent.com',
-      's.gravatar.com'
+      's.gravatar.com',
     ],
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
+
+
+  // remove babel config to use next default config
+  // babel: {
+  //   presets: [
+  //     [
+  //       '@babel/preset-env',
+  //       {
+  //         targets: {
+  //           node: 'current',
+  //         },
+  //       },
+  //     ],
+  //   ],
+  // },
+
+  babel: {
+    requireConfigFile: false,
+  }
+
 }

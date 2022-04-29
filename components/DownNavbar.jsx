@@ -21,7 +21,7 @@ const DownNavbar = () => {
     return (
       <>
         {!isLoading && isMobile && (
-          <nav className="dark:bg-gray-900 dark:text-white fixed bottom-0 grid h-14 w-full grid-cols-5 items-center justify-center bg-yellow-300 drop-shadow-lg">
+          <nav className="down-navbar  dark:bg-gray-900 dark:text-white fixed bottom-0 grid h-14 w-full grid-cols-5 items-center justify-center bg-gray-100">
             <div className='cursor-pointer text-2xl flex items-center justify-center transition duration-300 hover:text-slate-900 dark:text-white dark:hover:text-slate-400'>
               <TiHomeOutline />
             </div>
