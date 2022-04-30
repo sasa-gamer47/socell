@@ -34,7 +34,7 @@ const Navbar = () => {
             {isLoading && (
                 <div>Loading...</div>
             )}
-            {!isLoading && mongoDBUser && (
+            {!isLoading && (
                 <nav className={`fixed top-0 z-50 w-full h-14 items-center justify-center dark:bg-zinc-800 dark:text-white bg-gray-100 drop-shadow-lg grid ${isMobile ? 'mobile-navbar' : 'navbar'}`}>
                     <div className='ml-2 sm:ml-10 hover:cursor-pointer'>
                         <Link href={'/'}>
@@ -54,7 +54,14 @@ const Navbar = () => {
                                         </Menu.Button>
                                         <div className='absolute right-1 sm:right-8 text-center'>
                                             <Menu.Items>
-                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'><Link href={`/api/user/${mongoDBUser._id}`}>Profilo</Link></Menu.Item>
+                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'>
+                                                    <>
+                                                        {mongoDBUser && (
+                                                            <Link href={`/api/user/${mongoDBUser._id}`}><p>Profilo</p></Link>
+                                                        )}
+                                                        {!mongoDBUser && (<p>Profilo</p>)}
+                                                    </>
+                                                </Menu.Item>
                                                 <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'>Impostazioni</Menu.Item>
                                                 <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'>
                                                     <a href='/api/auth/logout'>Log out</a>

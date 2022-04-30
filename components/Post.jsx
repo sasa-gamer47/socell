@@ -35,13 +35,13 @@ const Post = ({ post }) => {
             </p>
             <div className="mt-3 flex items-center gap-x-5 text-xl">
                 <div className="ml-2 hover:cursor-pointer">
-                <AiOutlineLike />
+                    <AiOutlineLike />
                 </div>
                 <div className="hover:cursor-pointer">
-                <AiOutlineHeart />
+                    <AiOutlineHeart />
                 </div>
                 <div className="hover:cursor-pointer">
-                <AiOutlineShareAlt />
+                    <AiOutlineShareAlt />
                 </div>
             </div>
             <div className="mt-3 flex w-full items-center gap-x-2 text-lg">
