@@ -52,9 +52,9 @@ const Navbar = () => {
                                         </Menu.Button>
                                         <div className='absolute right-1 sm:right-8 text-center'>
                                             <Menu.Items>
-                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-gray-900 py-2 px-4'><Link href={`/api/user/${mongoDBUser._id}`}>Profilo</Link></Menu.Item>
-                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-gray-900 py-2 px-4'>Impostazioni</Menu.Item>
-                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-gray-900 py-2 px-4'>
+                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'><Link href={`/api/user/${mongoDBUser._id}`}>Profilo</Link></Menu.Item>
+                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'>Impostazioni</Menu.Item>
+                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'>
                                                     <a href='/api/auth/logout'>Log out</a>
                                                 </Menu.Item>
                                             </Menu.Items>    
