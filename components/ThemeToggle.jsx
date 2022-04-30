@@ -25,7 +25,7 @@ const ThemeToggle = () => {
       const [colorTheme, setTheme] = useDarkMode()
 
   return (
-    <div onClick={(() => colorTheme === 'dark' ? setTheme('dark') : setTheme('light'))} className={`relative h-5 w-full cursor-pointer rounded-lg transition duration-500 ${colorTheme === 'light' ? 'bg-gray-800' : 'bg-white'}`}>
+    <div onClick={(() => colorTheme === 'dark' ? setTheme('dark') : setTheme('light'))} className={`relative h-5 w-full cursor-pointer rounded-lg transition duration-500 ${colorTheme === 'light' ? 'bg-zinc-600' : 'bg-gray-200'}`}>
       <div
         className={`absolute ${
           colorTheme === 'light' ? 'right-0 bg-gray-100' : 'left-0 bg-gray-800'

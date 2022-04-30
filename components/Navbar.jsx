@@ -3,9 +3,9 @@ import { useUser } from '@auth0/nextjs-auth0'
 import Image from 'next/image'
 import { Menu } from '@headlessui/react'
 import Link from 'next/link'
-import { ThemeToggle, ThemeSelector } from './'
-// import dbConnect from '../utils/dbCoùznnect'
-// import User from '../models/User'
+import { ThemeToggle } from './'
+import { getUser } from '../utils'
+
 
 const Navbar = () => {
 
@@ -17,36 +17,24 @@ const Navbar = () => {
             setIsMobile(window.innerWidth <= 768)
             })
         }
-    }, [])
 
+    }, [])
+    
     
     const { user, isLoading } = useUser()
-    // const [mongoUser, setMongoUser] = useState(null)
-    // console.log(user);
+    const [mongoDBUser, setMongoDBUser] = useState(null)
     
-    // useEffect(() => {
-    //     dbConnect()
-    //     async function getMongoDBUser() {
-    //         console.log(User);
-    //         const res = await User.findOne({ email: user.email })
-    //         const data = await res.json()
-
-    //         console.log(data);
-    //         setMongoUser(data)
-    //     }
-
-    //     if (user) {
-    //         getMongoDBUser()
-    //     }
-    // }, [user])
+    if (user && !mongoDBUser) {
+        getUser(setMongoDBUser)
+    }
 
     return (
         <>
             {isLoading && (
                 <div>Loading...</div>
             )}
-            {!isLoading && (
-                <nav className={`fixed top-0 w-full h-14 items-center justify-center dark:bg-gray-900 dark:text-white bg-gray-100 drop-shadow-lg grid ${isMobile ? 'mobile-navbar' : 'navbar'}`}>
+            {!isLoading && mongoDBUser && (
+                <nav className={`fixed top-0 z-50 w-full h-14 items-center justify-center dark:bg-zinc-800 dark:text-white bg-gray-100 drop-shadow-lg grid ${isMobile ? 'mobile-navbar' : 'navbar'}`}>
                     <div>
                         [logo]
                     </div>
@@ -64,7 +52,7 @@ const Navbar = () => {
                                         </Menu.Button>
                                         <div className='absolute right-1 sm:right-8 text-center'>
                                             <Menu.Items>
-                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-gray-900 py-2 px-4'><Link href={`/api/user/`}>Profilo</Link></Menu.Item>
+                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-gray-900 py-2 px-4'><Link href={`/api/user/${mongoDBUser._id}`}>Profilo</Link></Menu.Item>
                                                 <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-gray-900 py-2 px-4'>Impostazioni</Menu.Item>
                                                 <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-gray-900 py-2 px-4'>
                                                     <a href='/api/auth/logout'>Log out</a>
