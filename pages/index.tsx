@@ -60,7 +60,7 @@ const Home: NextPage = () => {
       <div className='container absolute z-10 overflow-y-scroll my-14 dark:text-white'>
         {user && !isLoading && (
           <>
-            <div className='w-full p-1 bg-gray-500'>
+            {/* <div className='w-full p-1 bg-gray-500'>
               <div className='py-2 bg-gray-300 flex items-center'>
                 <div className='rounded-full overflow-hidden h-50'>
                   <Image src={user.picture} width={'50'} height={'50'} fill='responsive' />
@@ -85,7 +85,7 @@ const Home: NextPage = () => {
                 <p>Share</p>
               </div>
               <p>commenti</p>
-            </div>
+            </div> */}
           </>
         )}
       </div>
