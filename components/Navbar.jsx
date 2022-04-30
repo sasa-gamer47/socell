@@ -5,6 +5,7 @@ import { Menu } from '@headlessui/react'
 import Link from 'next/link'
 import { ThemeToggle } from './'
 import { getUser } from '../utils'
+import icon from '../images/logo.png'
 
 
 const Navbar = () => {
@@ -35,12 +36,13 @@ const Navbar = () => {
             )}
             {!isLoading && mongoDBUser && (
                 <nav className={`fixed top-0 z-50 w-full h-14 items-center justify-center dark:bg-zinc-800 dark:text-white bg-gray-100 drop-shadow-lg grid ${isMobile ? 'mobile-navbar' : 'navbar'}`}>
-                    <div>
-                        [logo]
+                    <div className='ml-2 sm:ml-10 hover:cursor-pointer'>
+                        <Link href={'/'}>
+                            <Image fill="responsive" src={icon} />
+                        </Link>
                     </div>
                     <div className='flex items-center px-3'>
                         <ThemeToggle />
-                        {/* <ThemeSelector /> */}
                     </div>
                     <div className='flex items-center justify-center'>
                         <div className='overflow-hidden h-12 w-12 rounded-full'>
