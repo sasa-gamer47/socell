@@ -45,7 +45,7 @@ const Post = ({ post }) => {
         
     useEffect(() => {
         if (postUser) {
-            const { red, green, blue, firstChar, secondChar } = getUserImgColor(postUser.nickname || postUser.username || 'undefined')
+            const { red, green, blue, firstChar, secondChar } = getUserImgColor(postUser.name || postUser.nickname || postUser.username || 'undefined')
 
             // console.log(postUser.nickname || postUser.username || 'undefined')
 
@@ -74,7 +74,7 @@ const Post = ({ post }) => {
     // }
 
     const deletePost = async () => { 
-        console.log('deleting...');
+        // console.log('deleting...');
         // console.log(post)
         const res = await fetch(`/api/post/${post._id}`, {
             method: 'DELETE'
@@ -88,11 +88,10 @@ const Post = ({ post }) => {
         <>
             {!isLoading && postUser && mongoDBUser && (
                 <div className="w-full relative p-1">
-                    {console.log(postUser.nickname || postUser.username)}
                     <div className="flex items-center py-2">
                         <div className="h-50 cursor-pointer ml-5 relative overflow-hidden rounded-full z-10">
                             <Link href={`/api/user/${postUser._id}`}>
-                                <>
+                                <div>
                                     {
                                         postUser.picture
                                         ?
@@ -105,7 +104,7 @@ const Post = ({ post }) => {
                                         :
                                         <div style={{background: userBgColor}} className='w-14 h-10 flex items-center justify-center text-white uppercase text-2xl font-semibold'>
                                                 <div className='-translate-x-1'>
-                                                    {postUser.nickname || postUser.username
+                                                    {postUser.name || postUser.nickname || postUser.username
                                                         ? 
                                                         `${usernameFirstChar}${usernameSecondChar}`
                                                         :
@@ -114,12 +113,12 @@ const Post = ({ post }) => {
                                             </div>
                                         </div>
                                     }
-                                </>
+                                </div>
                             </Link>
                         </div>
                         <div className="flex w-full items-center justify-between px-4">
                             <Link href={`/api/user/${postUser._id}`}>
-                                <h1 className="ml-2 cursor-pointer text-xl font-bold">{postUser.nickname || postUser.username || 'undefined'}</h1>
+                                <h1 className="ml-2 cursor-pointer text-xl font-bold">{postUser.name || postUser.nickname || postUser.username || 'undefined'}</h1>
                             </Link>
                             <div className="text-2xl hover:cursor-pointer">
                                 <Menu>
@@ -150,10 +149,10 @@ const Post = ({ post }) => {
                     </div>
                     <div className='z-10 cursor-pointer'>
                         <Link href={`/api/post/${post._id}`}>
-                            <>
+                            <div>
                                 {/* <Image src={post.img || testImg} width='400%' height='250%'  /> */}
-                                <img src={post.img} width='100%'  />
-                            </>
+                                <img draggable="false" src={post.img} width='100%'  />
+                            </div>
                         </Link>
                     </div>
                     <p className="text-lg p-2">

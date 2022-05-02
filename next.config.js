@@ -10,6 +10,7 @@ module.exports = {
       'th.bing.com',
       'www.bing.com',
       'www.google.com',
+      'api.cloudinary.com',
     ],
   },
   eslint: {

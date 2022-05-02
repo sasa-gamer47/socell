@@ -3,6 +3,8 @@ import { useUser } from '@auth0/nextjs-auth0'
 import { TiHomeOutline, TiHome } from 'react-icons/ti'
 import { MdOutlineExplore, MdExplore } from 'react-icons/md'
 import { AiOutlinePlusCircle } from 'react-icons/ai'
+import Link from 'next/link'
+import { getUser } from '../utils'
 
 const DownNavbar = () => {
 
@@ -17,20 +19,29 @@ const DownNavbar = () => {
         }
     }, [])
 
+    const [mongoDBUser, setMongoDBUser] = useState(null)
+
+    if (user && !mongoDBUser) {
+      getUser(user, setMongoDBUser)
+    }
+
 
     return (
       <>
-        {!isLoading && isMobile && (
-          <nav className="down-navbar z-40 dark:bg-zinc-800 dark:text-white fixed bottom-0 grid h-14 w-full grid-cols-5 items-center justify-center bg-gray-100">
-            <div className='cursor-pointer text-2xl flex items-center justify-center transition duration-300 hover:text-slate-900 dark:text-white dark:hover:text-slate-400 hover:text-zinc-700'>
+        {!isLoading && mongoDBUser && isMobile && (
+          <nav className="down-navbar fixed bottom-0 z-40 grid h-14 w-full grid-cols-5 items-center justify-center bg-gray-100 dark:bg-zinc-800 dark:text-white">
+            {console.log(`/${mongoDBUser._id}/new`)}
+            <div className="flex cursor-pointer items-center justify-center text-2xl transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400">
               <TiHomeOutline />
             </div>
-            <div className='cursor-pointer text-2xl flex items-center justify-center transition duration-300 hover:text-slate-900 dark:text-white dark:hover:text-slate-400 hover:text-zinc-700'>
+            <div className="flex cursor-pointer items-center justify-center text-2xl transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400">
               <MdOutlineExplore />
             </div>
-            <div className='cursor-pointer text-4xl flex items-center justify-center transition duration-300 hover:text-slate-900 dark:text-white dark:hover:text-slate-400 hover:text-zinc-700 hover:scale-110 hover:-translate-y-1'>
-              <AiOutlinePlusCircle />
-            </div>
+            <Link href={`/${mongoDBUser._id}/new`}>
+              <div className="flex cursor-pointer items-center justify-center text-4xl transition duration-300 hover:-translate-y-1 hover:scale-110 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400">
+                <AiOutlinePlusCircle />
+              </div>
+            </Link>
             <div>[Other]</div>
             <div>[Other]</div>
           </nav>

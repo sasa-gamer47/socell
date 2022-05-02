@@ -38,9 +38,9 @@ export function getUserImgColor(nickname) {
     const firstChar = nickname.charAt(0)
     const secondChar = nickname.charAt(1)
 
-    const red = Math.pow(charCodeRed, 7) % 200
-    const green = Math.pow(charCodeGreen, 7) % 200
-    const blue = (red + green) % 200
+    const red = Math.pow(charCodeRed, 7) % 240
+    const green = Math.pow(charCodeGreen, 8) % 240
+    const blue = (red + green) % 240
 
     return { red, green, blue, firstChar, secondChar }
 }
