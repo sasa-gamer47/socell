@@ -24,14 +24,23 @@ export async function getUser(User, setMongoDBUser) {
     })
 }
 
+export async function getUserById(id, setUser) {
+    const res = await fetch(`/api/user/${id}`)
+    const user = await res.json()
+
+    setUser(user)
+}
+
 export function getUserImgColor(nickname) {
     console.log('nickname: ' + nickname)
     const charCodeRed = nickname.charCodeAt(0)
     const charCodeGreen = nickname.charCodeAt(1)
+    const firstChar = nickname.charAt(0)
+    const secondChar = nickname.charAt(1)
 
     const red = Math.pow(charCodeRed, 7) % 200
     const green = Math.pow(charCodeGreen, 7) % 200
     const blue = (red + green) % 200
 
-    return { red, green, blue }
+    return { red, green, blue, firstChar, secondChar }
 }

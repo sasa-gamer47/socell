@@ -5,7 +5,7 @@ import { AiOutlineLike, AiOutlineHeart, AiOutlineShareAlt } from 'react-icons/ai
 import { Menu } from '@headlessui/react'
 import testImg from '../images/testImg.jpg'
 import testImg2 from '../images/testImg2.jpg'
-import { getUser, getUserImgColor } from '../utils'
+import { getUser, getUserImgColor, getUserById } from '../utils'
 import { useUser } from '@auth0/nextjs-auth0'
 import Link from 'next/link'
 
@@ -16,6 +16,8 @@ const Post = ({ post }) => {
     const [mongoDBUser, setMongoDBUser] = useState(null)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [userBgColor, setUserBgColor] = useState(null)
+    const [usernameFirstChar, setUsernameFirstChar] = useState(null)
+    const [usernameSecondChar, setUsernameSecondChar] = useState(null)
 
     // console.log(post);
     
@@ -26,11 +28,14 @@ const Post = ({ post }) => {
             const user = await response.json()
             // console.log(user.data);
             setPostUser(user.data)
-        }
 
+        }
+        
+        // getUserById(post.user, setPostUser)
         getUser()
     }, [])
-
+    
+    
 
     if (user && !mongoDBUser) {
         getUser(user, setMongoDBUser)
@@ -39,11 +44,14 @@ const Post = ({ post }) => {
         // console.log('user found')
         
     useEffect(() => {
-        if (mongoDBUser) {
-            console.log(mongoDBUser)
-            //should use the "postUser" by mongoDB, so a new var called "mongoDBPostUser"
-            const { red, green, blue } = getUserImgColor(mongoDBUser?.nickname || mongoDBUser?.username)
-            console.log(`color: rgb(${red}, ${green}, ${blue})`)
+        if (postUser) {
+            const { red, green, blue, firstChar, secondChar } = getUserImgColor(postUser.nickname || postUser.username || 'undefined')
+
+            // console.log(postUser.nickname || postUser.username || 'undefined')
+
+            setUsernameFirstChar(firstChar)
+            setUsernameSecondChar(secondChar)
+            // console.log(`color: rgb(${red}, ${green}, ${blue})`)
             setUserBgColor(`rgb(${red}, ${green}, ${blue})`)
         }
         
@@ -52,10 +60,12 @@ const Post = ({ post }) => {
 
     // console.log('user: ');
     // console.log(user);
-    console.log('mongoDBUser: ');
-    console.log(mongoDBUser);
+    // console.log('mongoDBUser: ');
+    // console.log(mongoDBUser);
     // console.log('postUser: ');
     // console.log(postUser);
+    // console.log('mongoDBPostUser: ');
+    // console.log(mongoDBPostUser);
     
     // if (mongoDBUser) {
     //     console.log('user found')
@@ -78,6 +88,7 @@ const Post = ({ post }) => {
         <>
             {!isLoading && postUser && mongoDBUser && (
                 <div className="w-full relative p-1">
+                    {console.log(postUser.nickname || postUser.username)}
                     <div className="flex items-center py-2">
                         <div className="h-50 cursor-pointer ml-5 relative overflow-hidden rounded-full z-10">
                             <Link href={`/api/user/${postUser._id}`}>
@@ -92,9 +103,14 @@ const Post = ({ post }) => {
                                             fill="responsive"
                                         />
                                         :
-                                        <div style={{background: userBgColor}} className='w-20 h-14 flex items-center justify-center text-white uppercase text-2xl font-semibold'>
-                                            <div className='-translate-x-2'>
-                                                {user.nickname[0] || user.username[0]}{user.nickname[1] || user.username[1]}
+                                        <div style={{background: userBgColor}} className='w-14 h-10 flex items-center justify-center text-white uppercase text-2xl font-semibold'>
+                                                <div className='-translate-x-1'>
+                                                    {postUser.nickname || postUser.username
+                                                        ? 
+                                                        `${usernameFirstChar}${usernameSecondChar}`
+                                                        :
+                                                        'un'
+                                                    }
                                             </div>
                                         </div>
                                     }
