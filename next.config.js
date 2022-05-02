@@ -7,12 +7,14 @@ module.exports = {
     domains: [
       'lh3.googleusercontent.com',
       's.gravatar.com',
+      'th.bing.com',
+      'www.bing.com',
+      'www.google.com',
     ],
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
-
 
   // remove babel config to use next default config
   // babel: {
@@ -30,6 +32,5 @@ module.exports = {
 
   babel: {
     requireConfigFile: false,
-  }
-
+  },
 }

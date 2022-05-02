@@ -26,7 +26,7 @@ const Navbar = () => {
     const [mongoDBUser, setMongoDBUser] = useState(null)
     
     if (user && !mongoDBUser) {
-        getUser(setMongoDBUser)
+        getUser(user, setMongoDBUser)
     }
 
     return (
@@ -35,10 +35,12 @@ const Navbar = () => {
                 <div>Loading...</div>
             )}
             {!isLoading && (
-                <nav className={`fixed top-0 z-50 w-full h-14 items-center justify-center dark:bg-zinc-800 dark:text-white bg-gray-100 drop-shadow-lg grid ${isMobile ? 'mobile-navbar' : 'navbar'}`}>
+                <nav className={`fixed top-0 z-40 w-full h-14 items-center justify-center dark:bg-zinc-800 dark:text-white bg-gray-100 drop-shadow-lg grid ${isMobile ? 'mobile-navbar' : 'navbar'}`}>
                     <div className='ml-2 sm:ml-10 hover:cursor-pointer'>
-                        <Link href={'/'}>
-                            <Image fill="responsive" src={icon} />
+                        <Link href={'/'} >
+                            <div>
+                                <Image fill="responsive" src={icon} />
+                            </div>
                         </Link>
                     </div>
                     <div className='flex items-center px-3'>

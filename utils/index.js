@@ -9,16 +9,29 @@ export function isMobileDevice() {
     }
 }
 
-export async function getUser(setMongoDBUser) {
+export async function getUser(User, setMongoDBUser) {
     const res = await fetch('/api/user')
     const users = await res.json()
 
     users.data.forEach((user) => {
         const { email } = user
 
-        if (user.email === email) {
+        if (User.email === email) {
+            // console.log(email);
         // console.log(user)
         setMongoDBUser(user)
         }
     })
+}
+
+export function getUserImgColor(nickname) {
+    console.log('nickname: ' + nickname)
+    const charCodeRed = nickname.charCodeAt(0)
+    const charCodeGreen = nickname.charCodeAt(1)
+
+    const red = Math.pow(charCodeRed, 7) % 200
+    const green = Math.pow(charCodeGreen, 7) % 200
+    const blue = (red + green) % 200
+
+    return { red, green, blue }
 }
