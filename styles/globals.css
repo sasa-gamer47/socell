@@ -19,7 +19,7 @@
     background: #000;
 } */
 
-.dark {
+.dark, .dark .loading-screen {
     background: hsl(0, 0%, 11%);
 }
 
@@ -28,4 +28,22 @@
     width: 100% !important;
     position: relative !important;
     height: unset !important;
+} */
+
+
+/* make a masonry layout */
+/* .posts-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 1rem;
+    margin-top: 1rem;
+    columns: 4;
+}
+
+/* make a masonry item */
+
+/*.post-card {
+    margin: 0;
+    float: none;
+    break-inside: avoid;
 } */

@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import { useUser } from '@auth0/nextjs-auth0'
-import { Post } from '../components/'
+import { Post, LoadingScreen } from '../components/'
 import { useState, useEffect, useRef } from 'react'
 
 const Home: NextPage = () => {
@@ -14,7 +14,7 @@ const Home: NextPage = () => {
   useEffect(() => {
 
     async function getPosts() {
-      console.log('starting...');
+      // console.log('starting...');
       
       const res = await fetch('/api/post')
       
@@ -34,15 +34,19 @@ const Home: NextPage = () => {
   
 
   return (
-    <div className="min-h-screen">
-      <div ref={grid} className='container grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 absolute z-10 overflow-y-scroll my-14 h-full  dark:text-white'>
-        {!isLoading && (
-          <>
-            {posts.map((post, index) => <Post post={post} key={index} />)}
-          </>
-        )}
+    <>
+      <LoadingScreen isLoading={true} />
+      <div className="min-h-screen">
+        <div ref={grid} className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 posts-container absolute z-10 overflow-y-scroll my-14 h-full  dark:text-white'>
+          {/*grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 */}
+          {!isLoading && (
+            <>
+              {posts.map((post, index) => <Post post={post} key={index} />)}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

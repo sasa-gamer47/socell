@@ -14,11 +14,21 @@ export default async (req, res) => {
     switch (method) {
         case 'GET':
             try {
-            const user = await User.findById(id)
-            res.status(200).json({ success: true, data: user })
+                const user = await User.findById(id)
+                res.status(200).json({ success: true, data: user })
             } catch (error) {
-            console.log(error)
-            res.status(400).json({ error: error.message })
+                console.log(error)
+                res.status(400).json({ error: error.message })
+            }
+
+            break
+        case 'PUT':
+            try {
+                const user = await User.findByIdAndUpdate(id)
+                res.status(200).json({ success: true, data: user })
+            } catch (error) {
+                console.log(error)
+                res.status(400).json({ error: error.message })
             }
 
             break
