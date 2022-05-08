@@ -32,9 +32,11 @@ const DownNavbar = () => {
         {!isLoading && mongoDBUser && isMobile && (
           <nav className="down-navbar fixed bottom-0 z-40 grid h-14 w-full grid-cols-5 items-center justify-center bg-gray-100 dark:bg-zinc-800 dark:text-white">
             {/* {console.log(`/${mongoDBUser._id}/new`)} */}
-            <div className="flex cursor-pointer items-center justify-center text-2xl transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400">
-              <TiHomeOutline />
-            </div>
+            <Link href={'/'}>
+              <div className="flex cursor-pointer items-center justify-center text-2xl transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400">
+                <TiHomeOutline />
+              </div>
+            </Link>
             <div className="flex cursor-pointer items-center justify-center text-2xl transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400">
               {/* <MdOutlineExplore /> */}
                 <RiSearchLine />

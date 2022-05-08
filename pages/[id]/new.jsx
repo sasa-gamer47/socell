@@ -7,12 +7,14 @@ import { useRouter } from 'next/router'
 // import { AdvancedImage } from '@cloudinary/react'
 // import { Cloudinary } from '@cloudinary/url-gen'
 import { getUserById } from '../../utils'
+import { useUser } from '@auth0/nextjs-auth0'
 
 const New = () => {
 
     
     // const cloudinary = require('cloudinary').v2
-    const [user, setUser] = useState(null)
+    const { user, isLoading } = useUser()
+    const [User, setUser] = useState(null)
     const content = useRef(null)
     const [image, setImage] = useState('')
     const router = useRouter()
@@ -23,6 +25,7 @@ const New = () => {
     // console.log(router);
 
     useEffect(() => {
+        // console.log(user.email === User.email)
         // if (id) {
             // console.log('initialazing');
             // }
@@ -38,8 +41,9 @@ const New = () => {
 
     return (
         <div>
-            {user && (
+            {User && user.email === User.email && !isLoading && (
                 <div className='absolute flex items-center justify-center dark:text-white bottom-14 sm:bottom-0 top-14 w-full'>
+                    {console.log('userrrrrr: ', user, User )}
                     {/* <img src={url} ref={img} width='500' height='500' /> */}
                     <form method='POST' action='/api/post/' onSubmit={async (e) => {
                         e.preventDefault()
@@ -62,7 +66,7 @@ const New = () => {
 
                             formData.append('upload_preset', 'my-uploads')
 
-                            console.log('user: ', user);
+                            // console.log('user: ', user);
 
                             const data = await fetch('https://api.cloudinary.com/v1_1/dcrsevgpq/image/upload', {
                                 method: 'POST',
@@ -72,6 +76,8 @@ const New = () => {
                                 if (data) {
                                     setSuccess(true)
                                     // setUser({...user, posts: [...user.posts, {  })
+
+                                    // resource type
 
                                     fetch('/api/post/', {
                                         method: 'POST',

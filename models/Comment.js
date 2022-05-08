@@ -15,6 +15,16 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    likes: {
+        type: Number,
+        default: 0,
+        required: true,
+    },
+    favorites: {
+        type: Number,
+        default: 0,
+        required: true,
+    },
     isReply: {
         type: Boolean,
         default: false,

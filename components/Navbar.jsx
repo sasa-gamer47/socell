@@ -6,6 +6,9 @@ import Link from 'next/link'
 import { ThemeToggle } from './'
 import { getUser } from '../utils'
 import icon from '../images/logo.png'
+import { BsPlusSquare, BsFillPlusSquareFill } from 'react-icons/bs'
+import { RiSearchLine, RiSearchFill } from 'react-icons/ri'
+import { TiHomeOutline, TiHome } from 'react-icons/ti'
 
 
 const Navbar = () => {
@@ -34,7 +37,7 @@ const Navbar = () => {
             {isLoading && (
                 <div>Loading...</div>
             )}
-            {!isLoading && (
+            {!isLoading && mongoDBUser && (
                 <nav className={`fixed top-0 z-40 w-full h-14 items-center justify-center dark:bg-zinc-800 dark:text-white bg-gray-100 drop-shadow-lg grid ${isMobile ? 'mobile-navbar' : 'navbar'}`}>
                     <div className='ml-2 sm:ml-10 hover:cursor-pointer'>
                         <Link href={'/'} >
@@ -43,6 +46,26 @@ const Navbar = () => {
                             </div>
                         </Link>
                     </div>
+                    {!isMobile && (
+                        <Link href={'/'}>
+                            <div className='flex items-center justify-center text-3xl cursor-pointer transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400'>
+                                <TiHomeOutline />
+                            </div>
+                        </Link>
+                    )}
+                    {!isMobile && (
+                        <div className='flex items-center justify-center text-3xl cursor-pointer transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400'>
+                            <RiSearchLine />
+                        </div>
+                    )}
+                    {!isMobile && (
+                        <Link href={`/${mongoDBUser._id}/new`}>
+                            <div className='flex items-center justify-center text-3xl cursor-pointer transition duration-300 hover:scale-110 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400'>
+                                <BsPlusSquare />
+                            </div>
+                        </Link>
+                    )}
+                    {!isMobile && <div></div>}
                     <div className='flex items-center px-3'>
                         <ThemeToggle />
                     </div>

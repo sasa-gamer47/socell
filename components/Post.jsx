@@ -8,6 +8,7 @@ import testImg2 from '../images/testImg2.jpg'
 import { getUser, getUserImgColor, getUserById } from '../utils'
 import { useUser } from '@auth0/nextjs-auth0'
 import Link from 'next/link'
+import { Comment } from './'
 
 const Post = ({ post }) => {
 
@@ -18,6 +19,26 @@ const Post = ({ post }) => {
     const [userBgColor, setUserBgColor] = useState(null)
     const [usernameFirstChar, setUsernameFirstChar] = useState(null)
     const [usernameSecondChar, setUsernameSecondChar] = useState(null)
+    const [comments, setComments] = useState([])
+    const [showMoreComments, setShowMoreComments] = useState(false)
+    const [updateComments, setUpdateComments] = useState(false)
+
+    useEffect(() => {
+        async function getComments() { 
+            const res = await fetch(`/api/comment/post/${post._id}`)
+            const comments = await res.json()
+
+            // console.log('comments: ', comments);
+            setComments(comments.data)
+
+            if (updateComments) {
+                //! doesn't work
+                console.log('comments updated');
+                setTimeout(() => setUpdateComments(false), 50)
+            }
+        }
+        getComments()
+    }, [updateComments])
 
     // console.log(post);
     
@@ -86,7 +107,7 @@ const Post = ({ post }) => {
 
     return (
         <>
-            {!isLoading && postUser && mongoDBUser && (
+            {!isLoading && comments && postUser && mongoDBUser && (
                 <div className="post-card relative w-full p-1">
                 {/* {console.log(postUser.name || postUser.username, postUser)} */}
                 <div className="flex items-center py-2">
@@ -217,290 +238,41 @@ const Post = ({ post }) => {
                     Invia
                 </button>
                 </div>
-                    {post.comments.length > -1 && (
+                    {/* {post.comments.length > 0 && ( */}
+                    {/* {console.log('length: ', comments.length)} */}
+                    {comments.length > 0 && (
                         <>
                             <div className='mt-3'></div>
-                            <div className=" w-full bg-red-400 p-1 px-3">
-                                <div className="text-md font-semibold">
-                                Commenti: {post.comments.length}
-                                </div>
-                                <div className="flex w-full flex-col">
-                                {/* comment template start */}
-                                <div>
-                                    <div className="relative flex items-center py-2">
-                                    <div className="h-30 relative z-10 ml-5 cursor-pointer overflow-hidden rounded-full">
-                                        <Link href={`/api/user/${postUser._id}`}>
+                            {comments.length <= 2
+                                ?
+                                (
+                                    <div>    
+                                        {comments.map((comment, index) => (
+                                            <Comment key={index} comment={comment} />
+                                            ))}
+                                    </div>
+                                )
+                                :
+                                (
+                                    <>
                                         <div>
-                                            {postUser.picture ? (
-                                            <Image
-                                                src={postUser.picture || testImg}
-                                                width={'45'}
-                                                height={'40'}
-                                                fill="responsive"
-                                            />
-                                            ) : (
-                                            <div
-                                                style={{ background: userBgColor }}
-                                                className="flex h-8 w-12 items-center justify-center text-xl font-semibold uppercase text-white"
-                                            >
-                                                <div className="-translate-x-1">
-                                                {postUser.name ||
-                                                postUser.nickname ||
-                                                postUser.username
-                                                    ? `${usernameFirstChar}${usernameSecondChar}`
-                                                    : 'un'}
-                                                </div>
-                                            </div>
-                                            )}
+                                            {comments.slice(0, 2).map((comment, index) => (
+                                                <Comment key={index} comment={comment} />
+                                            ))}
                                         </div>
-                                        </Link>
-                                    </div>
-                                    <div className="flex w-full items-center justify-between px-4">
-                                        <Link href={`/api/user/${postUser._id}`}>
-                                        <h1 className="ml-2 cursor-pointer text-md font-semibold">
-                                            {postUser.name ||
-                                            postUser.nickname ||
-                                            postUser.username ||
-                                            'undefined'}
-                                        </h1>
-                                        </Link>
-                                        <div className="text-2xl hover:cursor-pointer">
-                                        <Menu>
-                                            <Menu.Button>
-                                            <>
-                                                <BiDotsVerticalRounded />
-                                            </>
-                                            </Menu.Button>
-                                            <Menu.Items>
-                                            <div className="fixed bottom-14 right-0 z-[60] w-full rounded-lg text-xl sm:-top-0 sm:right-10 drop-shadow-lg sm:absolute sm:z-20 sm:w-fit sm:text-lg">
-                                                <Menu.Item
-                                                as="div"
-                                                className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                                >
-                                                {mongoDBUser._id === post.user
-                                                    ? 'Modifica'
-                                                    : 'Segnala'}
-                                                </Menu.Item>
-                                                <Menu.Item
-                                                as="div"
-                                                className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                                >
-                                                Segui
-                                                </Menu.Item>
-                                                {mongoDBUser._id === post.user && (
-                                                <Menu.Item
-                                                    as="div"
-                                                    className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                                    onClick={() => {
-                                                    setShowDeleteModal(true)
-                                                    // console.log(mongoDBUser._id)
-                                                    }}
-                                                >
-                                                    Elimina
-                                                </Menu.Item>
-                                                )}
-                                            </div>
-                                            </Menu.Items>
-                                        </Menu>
+                                        <div onClick={() => setShowMoreComments(true)} className='font-semibold text-sky-400 underline ml-5 mt-3 cursor-pointer'>
+                                            Mostra gli altri {comments.length - 2} commenti
                                         </div>
-                                    </div>
-                                    </div>
-                                    <div className='px-4'>
-                                                    uhnijmok,pl     fvygbuhnij
-                                                    gtrferfgtr3rgttr4gtgt54t5
-                                        t5gotg44p44
-                                        tgtlpgtè4gè5t4pè            
-                                    </div>
-                                </div>
-                                {/* comment template end */}
-                                </div>
-                            </div>
-                            <div className=" w-full bg-red-400 p-1 px-3">
-                                <div className="flex w-full flex-col">
-                                {/* comment template start */}
-                                <div>
-                                    <div className="relative flex items-center py-2">
-                                    <div className="h-30 relative z-10 ml-5 cursor-pointer overflow-hidden rounded-full">
-                                        <Link href={`/api/user/${postUser._id}`}>
-                                        <div>
-                                            {postUser.picture ? (
-                                            <Image
-                                                src={postUser.picture || testImg}
-                                                width={'45'}
-                                                height={'40'}
-                                                fill="responsive"
-                                            />
-                                            ) : (
-                                            <div
-                                                style={{ background: userBgColor }}
-                                                className="flex h-8 w-12 items-center justify-center text-xl font-semibold uppercase text-white"
-                                            >
-                                                <div className="-translate-x-1">
-                                                {postUser.name ||
-                                                postUser.nickname ||
-                                                postUser.username
-                                                    ? `${usernameFirstChar}${usernameSecondChar}`
-                                                    : 'un'}
-                                                </div>
-                                            </div>
-                                            )}
-                                        </div>
-                                        </Link>
-                                    </div>
-                                    <div className="flex w-full items-center justify-between px-4">
-                                        <Link href={`/api/user/${postUser._id}`}>
-                                        <h1 className="ml-2 cursor-pointer text-md font-semibold">
-                                            {postUser.name ||
-                                            postUser.nickname ||
-                                            postUser.username ||
-                                            'undefined'}
-                                        </h1>
-                                        </Link>
-                                        <div className="text-2xl hover:cursor-pointer">
-                                        <Menu>
-                                            <Menu.Button>
-                                            <>
-                                                <BiDotsVerticalRounded />
-                                            </>
-                                            </Menu.Button>
-                                            <Menu.Items>
-                                            <div className="fixed bottom-14 right-0 z-[60] w-full rounded-lg text-xl sm:-top-0 sm:right-10 drop-shadow-lg sm:absolute sm:z-20 sm:w-fit sm:text-lg">
-                                                <Menu.Item
-                                                as="div"
-                                                className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                                >
-                                                {mongoDBUser._id === post.user
-                                                    ? 'Modifica'
-                                                    : 'Segnala'}
-                                                </Menu.Item>
-                                                <Menu.Item
-                                                as="div"
-                                                className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                                >
-                                                Segui
-                                                </Menu.Item>
-                                                {mongoDBUser._id === post.user && (
-                                                <Menu.Item
-                                                    as="div"
-                                                    className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                                    onClick={() => {
-                                                    setShowDeleteModal(true)
-                                                    // console.log(mongoDBUser._id)
-                                                    }}
-                                                >
-                                                    Elimina
-                                                </Menu.Item>
-                                                )}
-                                            </div>
-                                            </Menu.Items>
-                                        </Menu>
-                                        </div>
-                                    </div>
-                                    </div>
-                                    <div className='px-4'>
-                                                    uhnijmok,pl     fvygbuhnij
-                                                    gtrferfgtr3rgttr4gtgt54t5
-                                        t5gotg44p44
-                                        tgtlpgtè4gè5t4pè            
-                                    </div>
-                                </div>
-                                {/* comment template end */}
-                                </div>
-                            </div>
-                            <div className=" w-full bg-red-400 p-1 px-3">
-                                <div className="flex w-full flex-col">
-                                {/* comment template start */}
-                                <div>
-                                    <div className="relative flex items-center py-2">
-                                    <div className="h-30 relative z-10 ml-5 cursor-pointer overflow-hidden rounded-full">
-                                        <Link href={`/api/user/${postUser._id}`}>
-                                        <div>
-                                            {postUser.picture ? (
-                                            <Image
-                                                src={postUser.picture || testImg}
-                                                width={'45'}
-                                                height={'40'}
-                                                fill="responsive"
-                                            />
-                                            ) : (
-                                            <div
-                                                style={{ background: userBgColor }}
-                                                className="flex h-8 w-12 items-center justify-center text-xl font-semibold uppercase text-white"
-                                            >
-                                                <div className="-translate-x-1">
-                                                {postUser.name ||
-                                                postUser.nickname ||
-                                                postUser.username
-                                                    ? `${usernameFirstChar}${usernameSecondChar}`
-                                                    : 'un'}
-                                                </div>
-                                            </div>
-                                            )}
-                                        </div>
-                                        </Link>
-                                    </div>
-                                    <div className="flex w-full items-center justify-between px-4">
-                                        <Link href={`/api/user/${postUser._id}`}>
-                                        <h1 className="ml-2 cursor-pointer text-md font-semibold">
-                                            {postUser.name ||
-                                            postUser.nickname ||
-                                            postUser.username ||
-                                            'undefined'}
-                                        </h1>
-                                        </Link>
-                                        <div className="text-2xl hover:cursor-pointer">
-                                        <Menu>
-                                            <Menu.Button>
-                                            <>
-                                                <BiDotsVerticalRounded />
-                                            </>
-                                            </Menu.Button>
-                                            <Menu.Items>
-                                            <div className="fixed bottom-14 right-0 z-[60] w-full rounded-lg text-xl sm:-top-0 sm:right-10 drop-shadow-lg sm:absolute sm:z-20 sm:w-fit sm:text-lg">
-                                                <Menu.Item
-                                                as="div"
-                                                className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                                >
-                                                {mongoDBUser._id === post.user
-                                                    ? 'Modifica'
-                                                    : 'Segnala'}
-                                                </Menu.Item>
-                                                <Menu.Item
-                                                as="div"
-                                                className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                                >
-                                                Segui
-                                                </Menu.Item>
-                                                {mongoDBUser._id === post.user && (
-                                                <Menu.Item
-                                                    as="div"
-                                                    className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                                    onClick={() => {
-                                                    setShowDeleteModal(true)
-                                                    // console.log(mongoDBUser._id)
-                                                    }}
-                                                >
-                                                    Elimina
-                                                </Menu.Item>
-                                                )}
-                                            </div>
-                                            </Menu.Items>
-                                        </Menu>
-                                        </div>
-                                    </div>
-                                    </div>
-                                    <div className='px-4'>
-                                                    uhnijmok,pl     fvygbuhnij
-                                                    gtrferfgtr3rgttr4gtgt54t5
-                                        t5gotg44p44
-                                        tgtlpgtè4gè5t4pè            
-                                    </div>
-                                </div>
-                                {/* comment template end */}
-                                </div>
-                            </div>
+                                    </>
+                                )
+                            }
+                            {/* {console.log('tgrefrerergterr')} */}
+                            {/* {comments.map(comment => {
+                                console.log('commenttttt: ',  comment);
+                            })} */}
+
                         </>
-                    )}
+                    )} 
             </div>
         )}
         {showDeleteModal && (
@@ -521,6 +293,7 @@ const Post = ({ post }) => {
                     onClick={() => {
                         setShowDeleteModal(false)
                         deletePost()
+                        setUpdateComments(true)
                     }}
                     className="rounded-lg bg-zinc-300 p-2 px-10 text-lg font-semibold drop-shadow-lg transition duration-300 hover:bg-zinc-400 dark:bg-zinc-700 dark:hover:bg-zinc-600"
                     >
@@ -529,6 +302,30 @@ const Post = ({ post }) => {
                 </div>
                 </div>
             </>
+            )}
+            {showMoreComments && (
+                <div>
+                    <div className='fixed opacity-50 inset-0 mt-14 z-[70] bg-black'></div>
+                    <div className='inset-6 bottom-20 top-20 bg-red-400 fixed z-[70]'>
+                        <div className="flex gap-x-5 items-center w-full absolute top-0 h-12 bg-zinc-900">
+                            <div onClick={() => setShowMoreComments(false)}>
+                                [back btn]
+                            </div>
+                            <div>
+                                Commenti: {comments.length}
+                            </div>
+                            <div>
+                                [something else]
+                            </div>
+                        </div>
+                        <div className='absolute top-12 bottom-0 overflow-y-auto flex flex-col justify-center w-full'>
+                            {comments.map((comment, index) => (
+                                <Comment key={index} comment={comment} />
+                            ))}
+                        </div>
+                    </div>
+
+                </div>
             )}
         </>
     )   
