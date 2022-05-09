@@ -37,7 +37,7 @@ const Home: NextPage = () => {
     <>
       <LoadingScreen isLoading={true} />
       <div className="min-h-screen">
-        <div ref={grid} className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 posts-container absolute z-10 overflow-y-scroll my-14 h-full  dark:text-white'>
+        <div ref={grid} className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 posts-container absolute z-10 overflow-y-auto my-14 h-full  dark:text-white'>
           {/*grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 */}
           {!isLoading && (
             <>

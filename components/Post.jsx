@@ -306,8 +306,8 @@ const Post = ({ post }) => {
             {showMoreComments && (
                 <div>
                     <div className='fixed opacity-50 inset-0 mt-14 z-[70] bg-black'></div>
-                    <div className='inset-6 bottom-20 top-20 bg-red-400 fixed z-[70]'>
-                        <div className="flex gap-x-5 items-center w-full absolute top-0 h-12 bg-zinc-900">
+                    <div className='inset-6 bottom-20 top-20 bg-gray-200 dark:bg-zinc-800 fixed z-[70]'>
+                        <div className="flex gap-x-5 items-center w-full absolute drop-shadow-lg top-0 h-12 bg-gray-300 dark:bg-zinc-900">
                             <div onClick={() => setShowMoreComments(false)}>
                                 [back btn]
                             </div>
@@ -318,7 +318,7 @@ const Post = ({ post }) => {
                                 [something else]
                             </div>
                         </div>
-                        <div className='absolute top-12 bottom-0 overflow-y-auto flex flex-col justify-center w-full'>
+                        <div className='absolute top-12 bottom-0 overflow-y-auto flex flex-col justify-center w-full '>
                             {comments.map((comment, index) => (
                                 <Comment key={index} comment={comment} />
                             ))}

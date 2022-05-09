@@ -11,7 +11,7 @@ import Image from 'next/image'
 
 const Comment = ({ comment }) => {
 
-    console.log(comment);
+    // console.log(comment);
 
     const { user, isLoading } = useUser()
     const [mongoDBUser, setMongoDBUser] = useState(null)
