@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/router'
 import Image from 'next/image'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { AiOutlineLike, AiOutlineHeart, AiOutlineShareAlt } from 'react-icons/ai'
@@ -13,6 +14,9 @@ import { Comment } from './'
 const Post = ({ post }) => {
 
     const { user, isLoading } = useUser()
+    const router = useRouter()
+    const { pathname, query } = useRouter()
+    const commentContent = useRef(null)
     const [postUser, setPostUser] = useState(null)
     const [mongoDBUser, setMongoDBUser] = useState(null)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -23,22 +27,38 @@ const Post = ({ post }) => {
     const [showMoreComments, setShowMoreComments] = useState(false)
     const [updateComments, setUpdateComments] = useState(false)
 
+    
+    async function getComments() { 
+        const res = await fetch(`/api/comment/post/${post._id}`)
+        const comments = await res.json()
+
+        // console.log('comments: ', comments);
+        setComments(comments.data)
+
+        // if (updateComments) {
+        //     //! doesn't work
+        //     console.log('comments updated');
+        //     setTimeout(() => setUpdateComments(false), 50)
+        // }
+    }
+
+    
     useEffect(() => {
-        async function getComments() { 
-            const res = await fetch(`/api/comment/post/${post._id}`)
-            const comments = await res.json()
-
-            // console.log('comments: ', comments);
-            setComments(comments.data)
-
-            if (updateComments) {
-                //! doesn't work
-                console.log('comments updated');
-                setTimeout(() => setUpdateComments(false), 50)
-            }
-        }
         getComments()
-    }, [updateComments])
+        
+    
+
+    }, [])
+
+    useEffect(() => {
+        if (query.updateComments === 'true') {
+            //! doesn't work
+            console.log('comments updated');
+            getComments()
+            router.push('/')
+        }
+    }, [pathname, query])
+    
 
     // console.log(post);
     
@@ -77,6 +97,41 @@ const Post = ({ post }) => {
         }
         
     }, [mongoDBUser])
+
+    const submitComment = async () => { 
+        console.log('text: ', commentContent.current.value);
+        if (commentContent.current.value.trim() !== '' && mongoDBUser) { 
+            console.log('submitting comment...');
+            console.log(commentContent.current.value);
+            const comment = commentContent.current.value
+
+            console.log('comment data: ', {
+                user: mongoDBUser._id,
+                post: post._id,
+                comment,
+                isReply: false,
+            })
+            const res = await fetch(`/api/comment/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user: mongoDBUser._id,
+                    post: post._id,
+                    content: comment,
+                    isReply: false,
+                })
+            })
+            const data = await res.json()
+            console.log('comment data response: ', data);
+            // setUpdateComments(true)
+            // setShowMoreComments(false)
+            commentContent.current.value = ''
+            getComments()
+        }
+
+    }
 
 
     // console.log('user: ');
@@ -230,11 +285,12 @@ const Post = ({ post }) => {
                 </div>
                 <div className="mt-3 flex w-full items-center gap-x-2 text-lg">
                 <input
+                    ref={commentContent}
                     className="mr-5 w-full rounded-lg bg-transparent p-1 focus:outline-yellow-500"
                     type="text"
                     placeholder="Commenta..."
                 />
-                <button className="mr-5 rounded-lg bg-sky-100 p-1 px-5 transition duration-300 hover:bg-sky-200 dark:bg-slate-700 dark:hover:bg-slate-600">
+                <button onClick={() => submitComment()} className="mr-5 rounded-lg bg-sky-100 p-1 px-5 transition duration-300 hover:bg-sky-200 dark:bg-slate-700 dark:hover:bg-slate-600">
                     Invia
                 </button>
                 </div>
@@ -293,7 +349,6 @@ const Post = ({ post }) => {
                     onClick={() => {
                         setShowDeleteModal(false)
                         deletePost()
-                        setUpdateComments(true)
                     }}
                     className="rounded-lg bg-zinc-300 p-2 px-10 text-lg font-semibold drop-shadow-lg transition duration-300 hover:bg-zinc-400 dark:bg-zinc-700 dark:hover:bg-zinc-600"
                     >

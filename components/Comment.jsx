@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { getUser, getUserImgColor, getUserById } from '../utils'
+import  { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Menu } from '@headlessui/react'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
@@ -14,6 +15,8 @@ const Comment = ({ comment }) => {
     // console.log(comment);
 
     const { user, isLoading } = useUser()
+    const router = useRouter()
+    const { pathname, query } = useRouter()
     const [mongoDBUser, setMongoDBUser] = useState(null)
     const [userBgColor, setUserBgColor] = useState(null)
     const [usernameFirstChar, setUsernameFirstChar] = useState(null)
@@ -38,6 +41,15 @@ const Comment = ({ comment }) => {
         const res = await fetch(`/api/comment/${comment._id}`, {
             method: 'DELETE',
         })
+
+        const data = await res.json()
+
+        if (data.success) {
+            // console.log('deleted');
+            // setShowDeleteModal(false)
+            // window.location.reload()
+            router.push({ pathname, query: { ...query, updateComments: true } })
+        }
 
         // console.log(res)
     }
