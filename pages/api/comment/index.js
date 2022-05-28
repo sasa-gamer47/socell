@@ -1,6 +1,5 @@
 import dbConnect from '../../../utils/dbConnect'
 import Post from '../../../models/Post'
-import User from '../../../models/User'
 import Comment from '../../../models/Comment'
 
 
@@ -29,13 +28,15 @@ export default async (req, res) => {
             // console.log('------');
 
             // console.log(comment._id);
-            // const test = await Post.findByIdAndUpdate(req.body.user, {
-            // $push: {
-            //     comments: comment._id,
-            // },
-            // })
+
+
+            const test = await Post.findByIdAndUpdate(req.body.post, {
+                $push: {
+                    comments: comment._id,
+                },
+            })
             // console.log('__________________________');
-            // console.log(test);
+            // console.log('test: ', test)
             res.status(201).json({ success: true, data: comment })
         } catch (error) {
             console.log(error)

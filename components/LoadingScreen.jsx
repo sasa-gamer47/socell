@@ -33,7 +33,7 @@ const LoadingScreen = ({ isLoading }) => {
                         }, 500)
                     }
 
-                }, i * 100)
+                }, i * 50)
             }
         }
 

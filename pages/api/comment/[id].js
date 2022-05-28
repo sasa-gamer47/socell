@@ -1,6 +1,7 @@
 // apis change v1.0.0
 import dbConnect from '../../../utils/dbConnect'
 import Comment from '../../../models/Comment'
+import Post from '../../../models/Post'
 
 dbConnect()
 
@@ -25,6 +26,19 @@ export default async (req, res) => {
         case 'DELETE':
         try {
             const comment = await Comment.deleteOne({ _id: id })
+
+            // console.log('------');
+
+            // console.log(comment._id);
+
+            // const test = await Post.findByIdAndUpdate(req.body.post, {
+            //     $pull: {
+            //         comments: comment._id,
+            //     },
+            // })
+            // console.log('__________________________');
+            // console.log('test: ', test)
+
             res.status(200).json({ success: true, data: {} })
         } catch (error) {
             console.log(error)

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
-import { AiOutlineLike, AiOutlineHeart, AiOutlineShareAlt } from 'react-icons/ai'
+import { AiOutlineLike, AiFillLike, AiOutlineHeart, AiOutlineShareAlt } from 'react-icons/ai'
 import { Menu } from '@headlessui/react'
 import testImg from '../images/testImg.jpg'
 import testImg2 from '../images/testImg2.jpg'
@@ -26,6 +26,8 @@ const Post = ({ post }) => {
     const [comments, setComments] = useState([])
     const [showMoreComments, setShowMoreComments] = useState(false)
     const [updateComments, setUpdateComments] = useState(false)
+    const [hasLiked, setHasLiked] = useState(false)
+    const [isMongDBUserSet, setIsMongDBUserSet] = useState(false)
 
     
     async function getComments() { 
@@ -52,8 +54,7 @@ const Post = ({ post }) => {
 
     useEffect(() => {
         if (query.updateComments === 'true') {
-            //! doesn't work
-            console.log('comments updated');
+            // console.log('comments updated');
             getComments()
             router.push('/')
         }
@@ -74,17 +75,27 @@ const Post = ({ post }) => {
         
         // getUserById(post.user, setPostUser)
         getUser()
+
+        post.userHaveLiked.indexOf(post.user) !== -1 ? setHasLiked(true) : setHasLiked(false)
+
+
     }, [])
     
     
 
-    if (user && !mongoDBUser) {
+    
+    if (user && !mongoDBUser && !isMongDBUserSet) {
+        console.log(mongoDBUser, );
+        console.log('user has been modified', user);
         getUser(user, setMongoDBUser)
     }
-
-        // console.log('user found')
-        
+    
+    
+    // console.log('user found')
+    
     useEffect(() => {
+        setIsMongDBUserSet(true)
+        console.log('mongoDBUser now exists');
         if (postUser) {
             const { red, green, blue, firstChar, secondChar } = getUserImgColor(postUser.name || postUser.nickname || postUser.username || 'undefined')
 
@@ -97,6 +108,64 @@ const Post = ({ post }) => {
         }
         
     }, [mongoDBUser])
+
+    const handleLike = async () => {
+        // console.log('-----------------');
+        // console.log(post.userHaveLiked.indexOf(post.user))
+        // console.log(post.userHaveLiked)
+        const index = post.userHaveLiked.indexOf(mongoDBUser._id)
+        
+        if (index === -1) {
+            console.log('like added');
+            console.log('users: ', [...post.userHaveLiked, mongoDBUser._id])
+            // console.log('users: ', post.userHaveLiked)
+            console.log('index: ', index)
+            const res = await fetch(`/api/like/post/${post._id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    post: post._id,
+                    users: [...post.userHaveLiked, mongoDBUser._id],
+                    likes: post.likes + 1
+                })
+        
+            })
+
+            setHasLiked(true)
+            
+            const data = await res.json()
+            console.log('data: ', data);
+        } else {
+            console.log('you have already liked this post');
+            const index = post.userHaveLiked.indexOf(mongoDBUser._id)
+            // console.log('users: ', post.userHaveLiked.splice(index, 1))
+            post.userHaveLiked.splice(index, 1)
+
+                const res = await fetch(`/api/like/post/${post._id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        post: post._id,
+                        users: post.userHaveLiked,
+                        likes: post.likes - 1
+                    })
+            
+                })
+            
+            
+                setHasLiked(false)
+    
+                const data = await res.json()
+                console.log('data: ', data);
+            }
+
+
+
+    }
 
     const submitComment = async () => { 
         console.log('text: ', commentContent.current.value);
@@ -265,9 +334,9 @@ const Post = ({ post }) => {
                 </div>
                 <p className="p-2 text-lg">{post.content}</p>
                 <div className="mt-3 flex items-center gap-x-5 text-xl">
-                <div className="ml-2 hover:cursor-pointer">
+                <div className="ml-2 hover:cursor-pointer" onClick={() => handleLike()}>
                     <div className="flex items-center gap-x-3">
-                    <AiOutlineLike />
+                    {hasLiked ? <AiFillLike /> : <AiOutlineLike />}
                     <div className="text-sm">{post.likes}</div>
                     </div>
                 </div>
@@ -284,11 +353,11 @@ const Post = ({ post }) => {
                 </div>
                 </div>
                 <div className="mt-3 flex w-full items-center gap-x-2 text-lg">
-                <input
+                <textarea
                     ref={commentContent}
                     className="mr-5 w-full rounded-lg bg-transparent p-1 focus:outline-yellow-500"
-                    type="text"
                     placeholder="Commenta..."
+                    rows="1"
                 />
                 <button onClick={() => submitComment()} className="mr-5 rounded-lg bg-sky-100 p-1 px-5 transition duration-300 hover:bg-sky-200 dark:bg-slate-700 dark:hover:bg-slate-600">
                     Invia
