@@ -22,8 +22,25 @@ const Comment = ({ comment }) => {
     const [usernameFirstChar, setUsernameFirstChar] = useState(null)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [hasLiked, setHasLiked] = useState(false)
+    const [isChanging, setIsChanging] = useState(false)
 
     // on "comment" change, update the comment
+
+    useEffect(() => { 
+        // update the comment
+        
+        console.log('updating comment...');
+
+        
+            
+        router.push({ pathname, query: { ...query, updateComments: true } })
+        // setTimeout(() => {
+            setIsChanging(false)
+        // }, 100);
+    }, [isChanging])
+
+
+
 
 
     useEffect(() => {
@@ -79,6 +96,8 @@ const Comment = ({ comment }) => {
       // console.log('-----------------');
       // console.log(post.userHaveLiked.indexOf(post.user))
       // console.log(post.userHaveLiked)
+        setIsChanging(true)
+
         const index = comment.userHaveLiked.indexOf(mongoDBUser._id)
 
         if (index === -1) {
