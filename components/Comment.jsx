@@ -83,7 +83,9 @@ const Comment = ({ comment, currentUser }) => {
             mongoDBUser.name || mongoDBUser.nickname || mongoDBUser.username || 'undefined'
             )
 
-            comment.userHaveLiked.indexOf(currentUser._id) !== -1 ? setHasLiked(true) : setHasLiked(false)
+            if (currentUser) {
+                comment.userHaveLiked.indexOf(currentUser._id) !== -1 ? setHasLiked(true) : setHasLiked(false)
+            }
         
             // console.log(mongoDBUser.nickname || mongoDBUser.username || 'undefined')
 
