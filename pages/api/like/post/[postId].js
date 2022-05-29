@@ -10,7 +10,7 @@ export default async (req, res) => {
         query: { postId },
     } = req
 
-    console.log(method)
+    // console.log(method)
 
     switch (method) {
         case 'GET':
@@ -24,9 +24,9 @@ export default async (req, res) => {
             break
         case 'POST':
             try {
-                console.log('likes num: ', req.body.likes)
-                console.log('postId: ', postId)
-                console.log('users: ', req.body.users)
+                // console.log('likes num: ', req.body.likes)
+                // console.log('postId: ', postId)
+                // console.log('users: ', req.body.users)
                 const post = await Post.findByIdAndUpdate(req.body.post, {
                     $set: {
                         likes: req.body.likes,

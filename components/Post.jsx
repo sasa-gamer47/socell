@@ -25,7 +25,6 @@ const Post = ({ post }) => {
     const [usernameSecondChar, setUsernameSecondChar] = useState(null)
     const [comments, setComments] = useState([])
     const [showMoreComments, setShowMoreComments] = useState(false)
-    const [updateComments, setUpdateComments] = useState(false)
     const [hasLiked, setHasLiked] = useState(false)
     const [isMongDBUserSet, setIsMongDBUserSet] = useState(false)
 
@@ -291,8 +290,8 @@ const Post = ({ post }) => {
                             <Menu.Item
                             as="div"
                             className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                            >
-                            Segui
+                                            >
+                            {mongoDBUser._id !== post.user && <p>Segui</p>}
                             </Menu.Item>
                             <Menu.Item
                             as="div"
@@ -336,19 +335,20 @@ const Post = ({ post }) => {
                 <div className="mt-3 flex items-center gap-x-5 text-xl">
                 <div className="ml-2 hover:cursor-pointer" onClick={() => handleLike()}>
                     <div className="flex items-center gap-x-3">
-                    {hasLiked ? <AiFillLike /> : <AiOutlineLike />}
+                        {hasLiked ? <AiFillLike /> : <AiOutlineLike />}
                     <div className="text-sm">{post.likes}</div>
                     </div>
                 </div>
                 <div className="hover:cursor-pointer">
                     <div className="flex items-center gap-x-3">
-                    <AiOutlineHeart />
+                        <AiOutlineHeart />
                     <div className="text-sm">{post.favorites}</div>
                     </div>
                 </div>
                 <div className="hover:cursor-pointer">
-                    <div>
-                    <AiOutlineShareAlt />
+                    <div className="flex items-center gap-x-3">
+                        <AiOutlineShareAlt />
+                        <div className="text-sm">{post.shares}</div>
                     </div>
                 </div>
                 </div>

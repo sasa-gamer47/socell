@@ -24,6 +24,11 @@ const postSchema = new mongoose.Schema({
         default: 0,
         required: true,
     },
+    shares: {
+        type: Number,
+        default: 0,
+        required: true,
+    },
     comments: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'Comment',
@@ -38,6 +43,21 @@ const postSchema = new mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'User',
         // required: true,
+    },
+    userHaveShared: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
+        // required: true,
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now,
+        required: true,
     },
 })
 

@@ -5,7 +5,7 @@ import  { useRouter } from 'next/router'
 import Link from 'next/link'
 import { Menu } from '@headlessui/react'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
-import { AiOutlineLike, AiOutlineHeart } from 'react-icons/ai'
+import { AiOutlineLike, AiFillLike, AiOutlineHeart } from 'react-icons/ai'
 import { BsReplyAll, BsReplyAllFill } from 'react-icons/bs'
 import Image from 'next/image'
 
@@ -21,6 +21,9 @@ const Comment = ({ comment }) => {
     const [userBgColor, setUserBgColor] = useState(null)
     const [usernameFirstChar, setUsernameFirstChar] = useState(null)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const [hasLiked, setHasLiked] = useState(false)
+
+    // on "comment" change, update the comment
 
 
     useEffect(() => {
@@ -32,6 +35,8 @@ const Comment = ({ comment }) => {
             setMongoDBUser(user.data)
         }
         getUser()
+
+        comment.userHaveLiked.indexOf(comment.user) !== -1 ? setHasLiked(true) : setHasLiked(false)
     }, [])
     const [usernameSecondChar, setUsernameSecondChar] = useState(null)
 
@@ -70,7 +75,57 @@ const Comment = ({ comment }) => {
 
     }, [mongoDBUser])
     
+    const handleLike = async () => {
+      // console.log('-----------------');
+      // console.log(post.userHaveLiked.indexOf(post.user))
+      // console.log(post.userHaveLiked)
+        const index = comment.userHaveLiked.indexOf(mongoDBUser._id)
 
+        if (index === -1) {
+            console.log('like added')
+            console.log('users: ', [...comment.userHaveLiked, mongoDBUser._id])
+            // console.log('users: ', comment.userHaveLiked)
+            console.log('index: ', index)
+            const res = await fetch(`/api/like/comment/${comment._id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                comment: comment._id,
+                users: [...comment.userHaveLiked, mongoDBUser._id],
+                likes: comment.likes + 1,
+            }),
+            })
+
+            setHasLiked(true)
+
+            const data = await res.json()
+            console.log('data: ', data)
+        } else {
+            console.log('you have already liked this comment')
+            const index = comment.userHaveLiked.indexOf(mongoDBUser._id)
+            // console.log('users: ', comment.userHaveLiked.splice(index, 1))
+            comment.userHaveLiked.splice(index, 1)
+
+            const res = await fetch(`/api/like/comment/${comment._id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                comment: comment._id,
+                users: comment.userHaveLiked,
+                likes: comment.likes - 1,
+            }),
+            })
+
+            setHasLiked(false)
+
+            const data = await res.json()
+            console.log('data: ', data)
+        }
+    }
 
     return (
         <div>
@@ -156,10 +211,13 @@ const Comment = ({ comment }) => {
                 </div>
                 <div className="px-4">{comment.content}</div>
                 <div className="mt-3 flex items-center gap-x-5 text-xl">
-                    <div className="ml-2 hover:cursor-pointer">
+                    <div className="ml-2 hover:cursor-pointer" onClick={() => handleLike()}>
                         <div className="flex items-center gap-x-3 text-lg ml-5">
-                            <AiOutlineLike />
-                        <div className="text-sm">{comment.likes}</div>
+                                {hasLiked ? <AiFillLike /> : <AiOutlineLike />}
+                                {hasLiked
+                                    ? <div className="text-sm">{comment.likes}</div> // + 1
+                                    : <div className="text-sm">{comment.likes}</div> // maybe - 1
+                                }
                         </div>
                     </div>
                     <div className="ml-2 hover:cursor-pointer">
@@ -171,8 +229,7 @@ const Comment = ({ comment }) => {
                     <div className="hover:cursor-pointer">
                         <div className="flex items-center gap-x-3 text-lg">
                             <BsReplyAll />
-                                {/* <div className="text-sm">{comment.favorites}</div> */}
-                                {/*  will set (maybe) the replies count */}
+                            <div className="text-sm">{comment.repliesCount}</div>
                         </div>
                     </div>
                 </div>    
