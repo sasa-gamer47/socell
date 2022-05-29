@@ -53,7 +53,8 @@ const Comment = ({ comment }) => {
         }
         getUser()
 
-        comment.userHaveLiked.indexOf(comment.user) !== -1 ? setHasLiked(true) : setHasLiked(false)
+        console.log('comment user: ', comment.user);
+
     }, [])
     const [usernameSecondChar, setUsernameSecondChar] = useState(null)
 
@@ -80,8 +81,9 @@ const Comment = ({ comment }) => {
         if (mongoDBUser) {
             const { red, green, blue, firstChar, secondChar } = getUserImgColor(
             mongoDBUser.name || mongoDBUser.nickname || mongoDBUser.username || 'undefined'
-        )
-
+            )
+            comment.userHaveLiked.indexOf(mongoDBUser._id) !== -1 ? setHasLiked(true) : setHasLiked(false)
+        
             // console.log(mongoDBUser.nickname || mongoDBUser.username || 'undefined')
 
             setUsernameFirstChar(firstChar)

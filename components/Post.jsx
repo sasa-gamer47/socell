@@ -75,9 +75,8 @@ const Post = ({ post }) => {
         // getUserById(post.user, setPostUser)
         getUser()
 
-        post.userHaveLiked.indexOf(post.user) !== -1 ? setHasLiked(true) : setHasLiked(false)
-
-
+        
+        
     }, [])
     
     
@@ -94,7 +93,12 @@ const Post = ({ post }) => {
     
     useEffect(() => {
         setIsMongDBUserSet(true)
-        console.log('mongoDBUser now exists');
+
+        if (mongoDBUser) {
+            post.userHaveLiked.indexOf(mongoDBUser._id) !== -1 ? setHasLiked(true) : setHasLiked(false)
+        }
+        
+        // console.log('mongoDBUser now exists');
         if (postUser) {
             const { red, green, blue, firstChar, secondChar } = getUserImgColor(postUser.name || postUser.nickname || postUser.username || 'undefined')
 
