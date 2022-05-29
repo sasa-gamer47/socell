@@ -105,8 +105,9 @@ const Comment = ({ comment, currentUser }) => {
 
         console.log('testing pre-function');
         console.log('index: ', index);
-        console.log('hasLiked: ', hasLiked);
+        // console.log('hasLiked: ', hasLiked);
         console.log('currentUser._id: ', currentUser._id);
+        console.log('users: ', comment.userHaveLiked)
 
 
         if (index === -1) {
@@ -133,7 +134,7 @@ const Comment = ({ comment, currentUser }) => {
         } else {
             console.log('you have already liked this comment')
             const index = comment.userHaveLiked.indexOf(currentUser._id)
-            console.log('users: ', comment.userHaveLiked.splice(index, 1))
+            // console.log('users: ', comment.userHaveLiked.splice(index, 1))
             comment.userHaveLiked.splice(index, 1)
 
             const res = await fetch(`/api/like/comment/${comment._id}`, {

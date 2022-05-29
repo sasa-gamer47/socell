@@ -46,9 +46,6 @@ const Post = ({ post }) => {
     
     useEffect(() => {
         getComments()
-        
-    
-
     }, [])
 
     useEffect(() => {
@@ -201,6 +198,10 @@ const Post = ({ post }) => {
             // setShowMoreComments(false)
             commentContent.current.value = ''
             getComments()
+
+            if (data.success) {
+                router.push({ pathname, query: { ...query, updateCreatedComments: true } })
+            }
         }
 
     }
