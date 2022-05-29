@@ -10,7 +10,7 @@ import { BsReplyAll, BsReplyAllFill } from 'react-icons/bs'
 import Image from 'next/image'
 
 
-const Comment = ({ comment }) => {
+const Comment = ({ comment, currentUser }) => {
 
     // console.log(comment);
 
@@ -82,7 +82,8 @@ const Comment = ({ comment }) => {
             const { red, green, blue, firstChar, secondChar } = getUserImgColor(
             mongoDBUser.name || mongoDBUser.nickname || mongoDBUser.username || 'undefined'
             )
-            comment.userHaveLiked.indexOf(mongoDBUser._id) !== -1 ? setHasLiked(true) : setHasLiked(false)
+
+            comment.userHaveLiked.indexOf(currentUser._id) !== -1 ? setHasLiked(true) : setHasLiked(false)
         
             // console.log(mongoDBUser.nickname || mongoDBUser.username || 'undefined')
 
@@ -100,12 +101,18 @@ const Comment = ({ comment }) => {
       // console.log(post.userHaveLiked)
         setIsChanging(true)
 
-        const index = comment.userHaveLiked.indexOf(mongoDBUser._id)
+        const index = comment.userHaveLiked.indexOf(currentUser._id)
+
+        console.log('testing pre-function');
+        console.log('index: ', index);
+        console.log('hasLiked: ', hasLiked);
+        console.log('currentUser._id: ', currentUser._id);
+
 
         if (index === -1) {
             console.log('like added')
-            console.log('users: ', [...comment.userHaveLiked, mongoDBUser._id])
-            // console.log('users: ', comment.userHaveLiked)
+            console.log('users: ', [...comment.userHaveLiked, currentUser._id])
+            console.log('users: ', comment.userHaveLiked)
             console.log('index: ', index)
             const res = await fetch(`/api/like/comment/${comment._id}`, {
             method: 'POST',
@@ -114,7 +121,7 @@ const Comment = ({ comment }) => {
             },
             body: JSON.stringify({
                 comment: comment._id,
-                users: [...comment.userHaveLiked, mongoDBUser._id],
+                users: [...comment.userHaveLiked, currentUser._id],
                 likes: comment.likes + 1,
             }),
             })
@@ -125,8 +132,8 @@ const Comment = ({ comment }) => {
             console.log('data: ', data)
         } else {
             console.log('you have already liked this comment')
-            const index = comment.userHaveLiked.indexOf(mongoDBUser._id)
-            // console.log('users: ', comment.userHaveLiked.splice(index, 1))
+            const index = comment.userHaveLiked.indexOf(currentUser._id)
+            console.log('users: ', comment.userHaveLiked.splice(index, 1))
             comment.userHaveLiked.splice(index, 1)
 
             const res = await fetch(`/api/like/comment/${comment._id}`, {
@@ -152,7 +159,7 @@ const Comment = ({ comment }) => {
         <div>
             {!isLoading && mongoDBUser && (
             <div>
-                <div className="relative flex items-center py-2">
+                <div className="relative flex itessdms-center py-2">
                 <div className="h-30 relative z-10 ml-5 cursor-pointer overflow-hidden rounded-full">
                     <Link href={`/api/user/${mongoDBUser._id}`}>
                     <div>

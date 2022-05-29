@@ -83,8 +83,8 @@ const Post = ({ post }) => {
 
     
     if (user && !mongoDBUser && !isMongDBUserSet) {
-        console.log(mongoDBUser, );
-        console.log('user has been modified', user);
+        // console.log(mongoDBUser);
+        // console.log('user has been modified', user);
         getUser(user, setMongoDBUser)
     }
     
@@ -97,7 +97,7 @@ const Post = ({ post }) => {
         if (mongoDBUser) {
             post.userHaveLiked.indexOf(mongoDBUser._id) !== -1 ? setHasLiked(true) : setHasLiked(false)
         }
-        
+
         // console.log('mongoDBUser now exists');
         if (postUser) {
             const { red, green, blue, firstChar, secondChar } = getUserImgColor(postUser.name || postUser.nickname || postUser.username || 'undefined')
@@ -377,7 +377,7 @@ const Post = ({ post }) => {
                                 (
                                     <div>    
                                         {comments.map((comment, index) => (
-                                            <Comment key={index} comment={comment} />
+                                            <Comment key={index} comment={comment} currentUser={mongoDBUser} />
                                             ))}
                                     </div>
                                 )
@@ -386,7 +386,7 @@ const Post = ({ post }) => {
                                     <>
                                         <div>
                                             {comments.slice(0, 2).map((comment, index) => (
-                                                <Comment key={index} comment={comment} />
+                                                <Comment key={index} comment={comment} currentUser={mongoDBUser} />
                                             ))}
                                         </div>
                                         <div onClick={() => setShowMoreComments(true)} className='font-semibold text-sky-400 underline ml-5 mt-3 cursor-pointer'>
