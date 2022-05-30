@@ -9,10 +9,13 @@ import icon from '../images/logo.png'
 import { BsPlusSquare, BsFillPlusSquareFill } from 'react-icons/bs'
 import { RiSearchLine, RiSearchFill } from 'react-icons/ri'
 import { TiHomeOutline, TiHome } from 'react-icons/ti'
+import { useRouter } from 'next/router'
 
 
 const Navbar = () => {
 
+    const router = useRouter()
+    const { pathname, query } = router
     const [isMobile, setIsMobile] = useState(null)
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -49,7 +52,7 @@ const Navbar = () => {
                     {!isMobile && (
                         <Link href={'/'}>
                             <div className='flex items-center justify-center text-3xl cursor-pointer transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400'>
-                                <TiHomeOutline />
+                                {pathname === '/' ? <TiHome /> : <TiHomeOutline />}
                             </div>
                         </Link>
                     )}
@@ -61,7 +64,7 @@ const Navbar = () => {
                     {!isMobile && mongoDBUser && (
                         <Link href={`/${mongoDBUser._id}/new`}>
                             <div className='flex items-center justify-center text-3xl cursor-pointer transition duration-300 hover:scale-110 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400'>
-                                <BsPlusSquare />
+                                {pathname === `/[id]/new` ? <BsFillPlusSquareFill /> : <BsPlusSquare />}
                             </div>
                         </Link>
                     )}

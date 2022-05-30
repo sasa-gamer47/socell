@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { TiHomeOutline, TiHome } from 'react-icons/ti'
 import { MdOutlineExplore, MdExplore } from 'react-icons/md'
-import { AiOutlinePlusCircle } from 'react-icons/ai'
+import { AiOutlinePlusCircle, AiFillPlusCircle } from 'react-icons/ai'
 import { RiSearchLine, RiSearchFill } from 'react-icons/ri'
 import Link from 'next/link'
 import { getUser } from '../utils'
+import { useRouter } from 'next/router'
 
 const DownNavbar = () => {
 
     const { user, isLoading } = useUser()
+    const router = useRouter()
+    const { pathname, query } = router
     const [isMobile, setIsMobile] = useState(null)
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -34,16 +37,16 @@ const DownNavbar = () => {
             {/* {console.log(`/${mongoDBUser._id}/new`)} */}
             <Link href={'/'}>
               <div className="flex cursor-pointer items-center justify-center text-2xl transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400">
-                <TiHomeOutline />
+                {pathname === '/' ? <TiHome /> : <TiHomeOutline />}
               </div>
             </Link>
             <div className="flex cursor-pointer items-center justify-center text-2xl transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400">
               {/* <MdOutlineExplore /> */}
-                <RiSearchLine />
+              <RiSearchLine />
             </div>
             <Link href={`/${mongoDBUser._id}/new`}>
               <div className="flex cursor-pointer items-center justify-center text-4xl transition duration-300 hover:-translate-y-1 hover:scale-110 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400">
-                <AiOutlinePlusCircle />
+                {pathname === `/[id]/new` ? <AiFillPlusCircle /> : <AiOutlinePlusCircle />}
               </div>
             </Link>
             <div>[Other]</div>
