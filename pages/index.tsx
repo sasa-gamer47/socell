@@ -37,7 +37,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (query.updateCreatedComments === 'true') {
-            // console.log('comments updated');
+            console.log('posts updated');
             getPosts()
             router.push('/')
         }

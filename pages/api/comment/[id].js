@@ -22,7 +22,23 @@ export default async (req, res) => {
             console.log(error)
             res.status(400).json({ error: error.message })
         }
-        break
+            break
+        case 'PUT':
+            try {
+                const comment = await Comment.findByIdAndUpdate(req.body.id, {
+                    $set: {
+                        content: req.body.content,
+                    },
+                })
+
+                console.log('updated comment body');
+                console.log(req.body);
+                res.status(200).json({ success: true, data: comment })
+            } catch (error) {
+                console.log(error)
+                res.status(400).json({ error: error.message })
+            }
+            break
         case 'DELETE':
         try {
             const comment = await Comment.deleteOne({ _id: id })

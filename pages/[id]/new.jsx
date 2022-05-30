@@ -101,10 +101,10 @@ const New = () => {
             
                                                 setTimeout(() => {
                                                     setSuccess(false)
-                                                }, 500)
+                                                }, 100)
                                                 setTimeout(() => {
                                                     router.push('/')
-                                                }, 500)
+                                                }, 200)
                                             }
                                         })
                                 } else {

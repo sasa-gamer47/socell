@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import { getUser, getUserImgColor, getUserById } from '../utils'
 import  { useRouter } from 'next/router'
@@ -15,6 +15,8 @@ const Comment = ({ comment, currentUser }) => {
     // console.log(comment);
 
     const { user, isLoading } = useUser()
+    const [isMobile, setIsMobile] = useState(null)
+    const commentText = useRef(null)
     const router = useRouter()
     const { pathname, query } = useRouter()
     const [mongoDBUser, setMongoDBUser] = useState(null)
@@ -22,26 +24,22 @@ const Comment = ({ comment, currentUser }) => {
     const [usernameFirstChar, setUsernameFirstChar] = useState(null)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [hasLiked, setHasLiked] = useState(false)
-    const [isChanging, setIsChanging] = useState(false)
-
-    // on "comment" change, update the comment
-
-    useEffect(() => { 
-        // update the comment
-        
-        console.log('updating comment...');
-
-        
-            
-        router.push({ pathname, query: { ...query, updateComments: true } })
-        // setTimeout(() => {
-            setIsChanging(false)
-        // }, 100);
-    }, [isChanging])
+    const [isEditing, setIsEditing] = useState(false)
+    const [hasLoaded, setHasLoaded] = useState(false)
+    const [editedContent, setEditedContent] = useState(comment.content)
+    const [isCanceled, setIsCanceled] = useState(false)
 
 
 
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setIsMobile(window.innerWidth <= 768)
+            window.addEventListener('resize', () => {
+            setIsMobile(window.innerWidth <= 768)
+            })
+        }
+    }, [])
 
     useEffect(() => {
         async function getUser() {
@@ -96,12 +94,69 @@ const Comment = ({ comment, currentUser }) => {
         }
 
     }, [mongoDBUser])
+
+    const editComment = (element) => {
+        setIsEditing(true)
+
+
+
+
+        // router.push({ pathname: `/comment/${comment._id}/edit`, query: { userId: mongoDBUser._id } })
+    }
+
+    if (commentText.current && !hasLoaded) {
+        commentText.current.value = comment.content
+        commentText.current.focus()
+        commentText.current.select()
+
+        console.log('edit comment')
+        console.log(comment)
+
+        setEditedContent(commentText.current.value)
+
+        setHasLoaded(true)
+    }
+
+    const confirmEditComment = async () => {
+        console.log('confirm edit comment');
+
+        const res = await fetch(`/api/comment/${comment._id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: comment._id,
+                content: editedContent,
+            })
+
+        })
+
+        const data = await res.json()
+
+        setIsEditing(false)
+
+        if (data.success) {
+            //     // setShowDeleteModal(false)
+            console.log('edited');
+        //     // window.location.reload()
+            router.push({ pathname, query: { ...query, updateComments: true } })
+        }
+
+        // console.log(res)
+
+    }
+
+    const cancelEditComment = () => {
+        setHasLoaded(false)
+        setIsEditing(false)
+        commentText.current.value = comment.content
+    }
     
     const handleLike = async () => {
       // console.log('-----------------');
       // console.log(post.userHaveLiked.indexOf(post.user))
       // console.log(post.userHaveLiked)
-        setIsChanging(true)
 
         const index = comment.userHaveLiked.indexOf(currentUser._id)
 
@@ -156,6 +211,8 @@ const Comment = ({ comment, currentUser }) => {
             const data = await res.json()
             console.log('data: ', data)
         }
+
+        router.push({ pathname, query: { ...query, updateComments: true } })
     }
 
     return (
@@ -208,13 +265,26 @@ const Comment = ({ comment, currentUser }) => {
                         </Menu.Button>
                         <Menu.Items>
                         <div className="fixed bottom-14 right-0 z-[60] w-full rounded-lg text-xl drop-shadow-lg sm:absolute sm:-top-0 sm:right-10 sm:z-20 sm:w-fit sm:text-lg">
+                            {isEditing && (
+                                <Menu.Item
+                                    as="div"
+                                    className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
+                                    onClick={() => cancelEditComment()}
+                                    >
+                                    Cancella
+                                </Menu.Item>               
+                            )}             
                             <Menu.Item
                             as="div"
                             className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
                             >
-                            {mongoDBUser.email === user.email
-                                ? 'Modifica'
-                                : 'Segnala'}
+                                {mongoDBUser.email === user.email
+                                    ? 
+                                        isEditing 
+                                            ? <p onClick={() => confirmEditComment()}>Conferma</p>
+                                            : <p onClick={() => editComment()}>Modifica</p>
+                                    : 'Segnala'
+                                }
                             </Menu.Item>
                             <Menu.Item
                             as="div"
@@ -239,8 +309,22 @@ const Comment = ({ comment, currentUser }) => {
                     </Menu>
                     </div>
                 </div>
-                </div>
-                <div className="px-4">{comment.content}</div>
+                    </div>
+                    {!isEditing
+                        ? <div className="px-4">{comment.content}</div>
+                        : isMobile 
+                            ?
+                                (
+                                    <div className='fixed bottom-14 z-[70] flex flex-col justify-center items-center w-full'>
+                                        <div className='flex w-full'>
+                                            <div className='cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full' onClick={() => cancelEditComment()}>Cancella</div>
+                                            <div className='cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full' onClick={() => confirmEditComment()}>Conferma</div>
+                                        </div>
+                                        <textarea onChange={() => setEditedContent(commentText.current.value)} ref={commentText} name="" id="" placeholder='Commenta...' className=" z-[70] h-40 sm:h-20 sm:h-auto w-full sm:w-auto sm:relative px-4 bg-zinc-800 outline-none" ></textarea>
+                                    </div>
+                                    )
+                            : <textarea onChange={() => setEditedContent(commentText.current.value)} ref={commentText} name="" id="" placeholder='Commenta...' className=" ml-5 w-9/12 rounded-lg h-20 px-4 bg-zinc-800 outline-none" ></textarea>
+                    }
                 <div className="mt-3 flex items-center gap-x-5 text-xl">
                     <div className="ml-2 hover:cursor-pointer" onClick={() => handleLike()}>
                         <div className="flex items-center gap-x-3 text-lg ml-5">

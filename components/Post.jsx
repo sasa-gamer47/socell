@@ -50,11 +50,14 @@ const Post = ({ post }) => {
 
     useEffect(() => {
         if (query.updateComments === 'true') {
-            // console.log('comments updated');
+            console.log('comments updated');
             getComments()
             router.push('/')
+
+
+            // 'comments updated 38' // 38 times
         }
-    }, [pathname, query])
+    }, [router])
     
 
     // console.log(post);
@@ -200,6 +203,7 @@ const Post = ({ post }) => {
             getComments()
 
             if (data.success) {
+                console.log('redirecting by publishing');
                 router.push({ pathname, query: { ...query, updateCreatedComments: true } })
             }
         }
