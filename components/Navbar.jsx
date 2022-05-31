@@ -9,6 +9,7 @@ import icon from '../images/logo.png'
 import { BsPlusSquare, BsFillPlusSquareFill } from 'react-icons/bs'
 import { RiSearchLine, RiSearchFill } from 'react-icons/ri'
 import { TiHomeOutline, TiHome } from 'react-icons/ti'
+import { MdOutlineNotificationsNone, MdNotifications } from 'react-icons/md'
 import { useRouter } from 'next/router'
 
 
@@ -67,6 +68,11 @@ const Navbar = () => {
                                 {pathname === `/[id]/new` ? <BsFillPlusSquareFill /> : <BsPlusSquare />}
                             </div>
                         </Link>
+                    )}
+                    {!isMobile && (
+                        <div className='flex items-center justify-center text-3xl cursor-pointer transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400'>
+                            <MdOutlineNotificationsNone />
+                        </div>
                     )}
                     {!isMobile && <div></div>}
                     <div className='flex items-center px-3'>

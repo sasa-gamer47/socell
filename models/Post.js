@@ -10,9 +10,14 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    contentType: {
+        type: String,
+        default: 'img',
+        required: true,
+    },
     content: {
         type: String,
-        required: true
+        required: true,
     },
     likes: {
         type: Number,

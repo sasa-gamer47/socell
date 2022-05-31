@@ -9,7 +9,7 @@ const commentSchema = new mongoose.Schema({
     post: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Post',
-        required: true
+        // required: true
     },
     content: {
         type: String,
@@ -23,6 +23,7 @@ const commentSchema = new mongoose.Schema({
     replies: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'Comment',
+        default: [],
         required: true,
     }, // idk if'll need this
     repliesCount: {

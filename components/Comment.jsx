@@ -10,6 +10,7 @@ import { BsReplyAll, BsReplyAllFill } from 'react-icons/bs'
 import Image from 'next/image'
 
 
+
 const Comment = ({ comment, currentUser }) => {
 
     // console.log(comment);
@@ -27,9 +28,19 @@ const Comment = ({ comment, currentUser }) => {
     const [isEditing, setIsEditing] = useState(false)
     const [hasLoaded, setHasLoaded] = useState(false)
     const [editedContent, setEditedContent] = useState(comment.content)
-    const [isCanceled, setIsCanceled] = useState(false)
+    const commentRef = useRef(null)
+    const [replies, setReplies] = useState([])
+    const [isReplying, setIsReplying] = useState(false)
+    const [replyContent, setReplyContent] = useState('')
+    const replyText = useRef(null)
 
 
+    async function getComment(id) {
+        const response = await fetch(`/api/comment/${id}`)
+        const comment = await response.json()
+
+        return comment.data
+    }
 
 
     useEffect(() => {
@@ -53,6 +64,17 @@ const Comment = ({ comment, currentUser }) => {
 
         console.log('comment user: ', comment.user);
 
+        
+        // console.log('replies: ', replies);
+        
+        comment.replies.forEach(async reply => { 
+            const comment = await getComment(reply)
+            // setReplies(replies => [...replies.filter(reply => reply._id !== reply._id), comment])
+            
+            setReplies(replies => [...replies, comment])
+            console.log('replies: ', replies);
+
+        })
     }, [])
     const [usernameSecondChar, setUsernameSecondChar] = useState(null)
 
@@ -97,7 +119,7 @@ const Comment = ({ comment, currentUser }) => {
 
     const editComment = (element) => {
         setIsEditing(true)
-
+        setIsReplying(false)
 
 
 
@@ -140,7 +162,7 @@ const Comment = ({ comment, currentUser }) => {
             //     // setShowDeleteModal(false)
             console.log('edited');
         //     // window.location.reload()
-            router.push({ pathname, query: { ...query, updateComments: true } })
+            router.push({ pathname, query: { ...query, updateCreatedComments: true } })
         }
 
         // console.log(res)
@@ -215,11 +237,78 @@ const Comment = ({ comment, currentUser }) => {
         router.push({ pathname, query: { ...query, updateComments: true } })
     }
 
+    const handleReply = async () => {
+        setIsEditing(false)
+        setIsReplying(true)
+        console.log('replying...');
+        console.log(comment);
+    }
+
+    const confirmReplyComment = async () => {
+
+        console.log('replying comment')
+
+        console.log('body: ', {
+            user: currentUser._id,
+            replyTo: comment._id,
+            content: replyContent,
+            isReply: true,
+        })
+
+        const res = await fetch(`/api/comment/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    user: currentUser._id,
+                    replyTo: comment._id,
+                    content: replyContent,
+                    isReply: true,
+                })
+        })
+        
+        const data = await res.json()
+
+        if (data.success) {
+            console.log('replied');
+            setIsReplying(false)
+
+            
+            router.push({ pathname, query: { ...query, updateComments: true } })
+        }
+        
+        if (data.data) {
+            console.log('data object: ', data.data);
+            
+            const updateComment = await fetch(`/api/comment/${comment._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: comment._id,
+                    replies: [...comment.replies, data.data._id],
+                    content: comment.content,
+                    repliesCount: comment.repliesCount + 1,
+                }),
+            })
+        }
+
+        console.log('data: ', data);
+
+
+    }
+
+    const cancelReplyingComment = () => {
+        setIsReplying(false)
+    }
+
     return (
-        <div>
+        <div ref={commentRef}>
             {!isLoading && mongoDBUser && (
-            <div>
-                <div className="relative flex itessdms-center py-2">
+                <div className={`${comment.isReply ? 'ml-10' : ''}`} >
+                <div className='relative flex items-center py-2'>
                 <div className="h-30 relative z-10 ml-5 cursor-pointer overflow-hidden rounded-full">
                     <Link href={`/api/user/${mongoDBUser._id}`}>
                     <div>
@@ -265,11 +354,20 @@ const Comment = ({ comment, currentUser }) => {
                         </Menu.Button>
                         <Menu.Items>
                         <div className="fixed bottom-14 right-0 z-[60] w-full rounded-lg text-xl drop-shadow-lg sm:absolute sm:-top-0 sm:right-10 sm:z-20 sm:w-fit sm:text-lg">
-                            {isEditing && (
+                            {isEditing && !isReplying && (
                                 <Menu.Item
                                     as="div"
                                     className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
                                     onClick={() => cancelEditComment()}
+                                    >
+                                    Cancella
+                                </Menu.Item>               
+                            )}             
+                            {isReplying && !isEditing && (
+                                <Menu.Item
+                                    as="div"
+                                    className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
+                                    onClick={() => cancelReplyingComment()}
                                     >
                                     Cancella
                                 </Menu.Item>               
@@ -282,8 +380,14 @@ const Comment = ({ comment, currentUser }) => {
                                     ? 
                                         isEditing 
                                             ? <p onClick={() => confirmEditComment()}>Conferma</p>
-                                            : <p onClick={() => editComment()}>Modifica</p>
-                                    : 'Segnala'
+                                            :
+                                                isReplying
+                                                ? <p onClick={() => {
+                                                    console.log("replying comment...");
+                                                    confirmReplyComment()
+                                                }}>Conferma</p>
+                                                    : <p onClick={() => editComment()}>Modifica</p>
+                                    :   'Segnala'
                                 }
                             </Menu.Item>
                             <Menu.Item
@@ -320,10 +424,10 @@ const Comment = ({ comment, currentUser }) => {
                                             <div className='cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full' onClick={() => cancelEditComment()}>Cancella</div>
                                             <div className='cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full' onClick={() => confirmEditComment()}>Conferma</div>
                                         </div>
-                                        <textarea onChange={() => setEditedContent(commentText.current.value)} ref={commentText} name="" id="" placeholder='Commenta...' className=" z-[70] h-40 sm:h-20 sm:h-auto w-full sm:w-auto sm:relative px-4 bg-zinc-800 outline-none" ></textarea>
+                                        <textarea onChange={() => setEditedContent(commentText.current.value)} ref={commentText} name="" id="" placeholder='Commenta...' className=" z-[70] h-40 sm:h-20 sm:h-auto w-full sm:w-auto sm:relative px-4 bg-gray-200 dark:bg-zinc-800 outline-none" ></textarea>
                                     </div>
                                     )
-                            : <textarea onChange={() => setEditedContent(commentText.current.value)} ref={commentText} name="" id="" placeholder='Commenta...' className=" ml-5 w-9/12 rounded-lg h-20 px-4 bg-zinc-800 outline-none" ></textarea>
+                            : <textarea onChange={() => setEditedContent(commentText.current.value)} ref={commentText} name="" id="" placeholder='Commenta...' className=" ml-5 w-9/12 rounded-lg h-20 px-4 bg-gray-200 dark:bg-zinc-800 outline-none" ></textarea>
                     }
                 <div className="mt-3 flex items-center gap-x-5 text-xl">
                     <div className="ml-2 hover:cursor-pointer" onClick={() => handleLike()}>
@@ -341,7 +445,7 @@ const Comment = ({ comment, currentUser }) => {
                         <div className="text-sm">{comment.favorites}</div>
                         </div>
                     </div>
-                    <div className="hover:cursor-pointer">
+                    <div className="hover:cursor-pointer" onClick={() => handleReply()}>
                         <div className="flex items-center gap-x-3 text-lg">
                             <BsReplyAll />
                             <div className="text-sm">{comment.repliesCount}</div>
@@ -377,7 +481,27 @@ const Comment = ({ comment, currentUser }) => {
             </div>
             </div>
         </>
-        )}
+            )}
+            
+            <div className="flex flex-col items-center justify-center w-full mt-5 bg-red-400">
+                {console.log(replies)}
+                {isReplying && (
+                    <div className="w-full h-20">
+                        {isMobile 
+                            ? (
+                                <div className="flex w-full">
+                                    <div className="cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full" onClick={() => cancelReply()}>Cancella</div>
+                                    <div className="cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full" onClick={() => confirmReply()}>Conferma</div>
+                                </div>
+                            )
+                            : <textarea ref={replyText} onChange={() => setReplyContent(replyText.current.value)}  name="" id="" placeholder='Commenta...' className=" h-20 w-full px-4 bg-gray-200 dark:bg-zinc-800 outline-none" ></textarea>
+                        }
+                    </div>
+                )}
+                {replies.map((reply, index) => (
+                    <Comment key={index} comment={reply} currentUser={currentUser} />
+                ))}
+            </div>
     </div>
     )
 }

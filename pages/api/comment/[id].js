@@ -28,6 +28,8 @@ export default async (req, res) => {
                 const comment = await Comment.findByIdAndUpdate(req.body.id, {
                     $set: {
                         content: req.body.content,
+                        replies: req.body.replies,
+                        repliesCount: req.body.repliesCount,
                     },
                 })
 
