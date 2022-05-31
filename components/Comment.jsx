@@ -33,6 +33,7 @@ const Comment = ({ comment, currentUser }) => {
     const [isReplying, setIsReplying] = useState(false)
     const [replyContent, setReplyContent] = useState('')
     const replyText = useRef(null)
+    const [showReplies, setShowReplies] = useState(false)
 
 
     async function getComment(id) {
@@ -307,7 +308,7 @@ const Comment = ({ comment, currentUser }) => {
     return (
         <div ref={commentRef}>
             {!isLoading && mongoDBUser && (
-                <div className={`${comment.isReply ? 'ml-10' : ''}`} >
+                <div className={`${comment.isReply ? 'relative w-full' : ''}`}>
                 <div className='relative flex items-center py-2'>
                 <div className="h-30 relative z-10 ml-5 cursor-pointer overflow-hidden rounded-full">
                     <Link href={`/api/user/${mongoDBUser._id}`}>
@@ -483,25 +484,71 @@ const Comment = ({ comment, currentUser }) => {
         </>
             )}
             
-            <div className="flex flex-col items-center justify-center w-full mt-5 bg-red-400">
-                {console.log(replies)}
-                {isReplying && (
-                    <div className="w-full h-20">
-                        {isMobile 
-                            ? (
-                                <div className="flex w-full">
-                                    <div className="cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full" onClick={() => cancelReply()}>Cancella</div>
-                                    <div className="cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full" onClick={() => confirmReply()}>Conferma</div>
+            {replies.length > 0 && (
+                <div onClick={() => setShowReplies(!showReplies)} className='font-semibold text-sky-400 underline ml-5 mt-3 cursor-pointer'>
+                    Mostre le {replies.length} risposte
+                </div>
+            )}
+
+            {showReplies && (
+                <>
+                    <div className='fixed opacity-50 inset-0 mt-14 z-[70] bg-black'></div>
+
+                    <Comment comment={comment} currentUser={currentUser} />
+                    <div className="inset-6 bottom-20 top-20 bg-gray-200 dark:bg-zinc-800 fixed z-[70] left-5 flex flex-col w-full mt-5">
+                        <div className="flex gap-x-5 items-center w-full absolute drop-shadow-lg top-0 h-12 bg-gray-300 dark:bg-zinc-900">
+                            <div onClick={() => setShowReplies(false)}>
+                                [back btn]
+                            </div>
+                            <div>
+                                Risposte: {replies.length}
+                            </div>
+                            <div>
+                                [something else]
+                            </div>
+                        </div>
+                        {console.log(replies)}
+                        {/* <div className='absolute top-12 bottom-0 overflow-y-auto flex flex-col justify-center w-full '> */}
+                            
+                        {/* </div> */}
+                        <div className='absolute top-12 bottom-0 overflow-y-auto flex flex-col justify-center w-full '>
+                            {replies.map((reply, index) => (
+                                <>
+                                    <Comment key={index} comment={reply} currentUser={currentUser} />
+                                    {isReplying && (
+                                        <>
+                                            {/* <div className="bg-yellow-400">
+                                                {isMobile 
+                                                    ? (
+                                                        <div className="flex w-full">
+                                                            <div className="cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full" onClick={() => cancelReply()}>Cancella</div>
+                                                            <div className="cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full" onClick={() => confirmReply()}>Conferma</div>
+                                                        </div>
+                                                    )
+                                                    : <textarea ref={replyText} onChange={() => setReplyContent(replyText.current.value)}  name="" id="" placeholder='Commenta...' className=" h-20 w-full px-4 bg-gray-200 dark:bg-zinc-800 outline-none" ></textarea>
+                                                }
+                                            </div> */}
+                                        </>
+                                    )}
+                                </>
+                            ))}
+                            {isReplying && (
+                                <div className="bg-yellow-400">
+                                    {isMobile 
+                                        ? (
+                                            <div className="flex w-full">
+                                                <div className="cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full" onClick={() => cancelReply()}>Cancella</div>
+                                                <div className="cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full" onClick={() => confirmReply()}>Conferma</div>
+                                            </div>
+                                        )
+                                        : <textarea ref={replyText} onChange={() => setReplyContent(replyText.current.value)}  name="" id="" placeholder='Commenta...' className=" h-20 w-full px-4 bg-gray-200 dark:bg-zinc-800 outline-none" ></textarea>
+                                    }
                                 </div>
-                            )
-                            : <textarea ref={replyText} onChange={() => setReplyContent(replyText.current.value)}  name="" id="" placeholder='Commenta...' className=" h-20 w-full px-4 bg-gray-200 dark:bg-zinc-800 outline-none" ></textarea>
-                        }
+                            )}
+                        </div>
                     </div>
-                )}
-                {replies.map((reply, index) => (
-                    <Comment key={index} comment={reply} currentUser={currentUser} />
-                ))}
-            </div>
+                </>
+            )}
     </div>
     )
 }
