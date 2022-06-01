@@ -249,6 +249,8 @@ const Comment = ({ comment, currentUser }) => {
 
         console.log('replying comment')
 
+        if (replyContent === '') return;
+
         console.log('body: ', {
             user: currentUser._id,
             replyTo: comment._id,
@@ -483,6 +485,23 @@ const Comment = ({ comment, currentUser }) => {
             </div>
         </>
             )}
+
+            {isReplying && (
+                <div className="">
+                    {isMobile 
+                        ? (
+                            <div className="fixed bottom-14 z-[70] flex flex-col justify-center items-center w-full">
+                                <div className='flex w-full'>
+                                    <div className="cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full" onClick={() => cancelReplyingComment()}>Cancella</div>
+                                    <div className="cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 w-full" onClick={() => confirmReplyComment()}>Conferma</div>
+                                </div>
+                                <textarea onChange={() => setReplyContent(commentText.current.value)} ref={commentText} name="" id="" placeholder='Commenta...' className=" z-[70] h-40 sm:h-20 sm:h-auto w-full sm:w-auto sm:relative px-4 bg-gray-200 dark:bg-zinc-800 outline-none" ></textarea>
+                            </div>
+                        )
+                        : <textarea ref={replyText} onChange={() => setReplyContent(replyText.current.value)}  name="" id="" placeholder='Commenta...' className="mt-2 w-full px-4 bg-gray-200 dark:bg-zinc-800 outline-none" ></textarea>
+                    }
+                </div>
+            )}
             
             {replies.length > 0 && (
                 <div onClick={() => setShowReplies(!showReplies)} className='font-semibold text-sky-400 underline ml-5 mt-3 cursor-pointer'>
@@ -532,7 +551,7 @@ const Comment = ({ comment, currentUser }) => {
                                     )}
                                 </>
                             ))}
-                            {isReplying && (
+                            {/* {isReplying && (
                                 <div className="bg-yellow-400">
                                     {isMobile 
                                         ? (
@@ -544,7 +563,7 @@ const Comment = ({ comment, currentUser }) => {
                                         : <textarea ref={replyText} onChange={() => setReplyContent(replyText.current.value)}  name="" id="" placeholder='Commenta...' className=" h-20 w-full px-4 bg-gray-200 dark:bg-zinc-800 outline-none" ></textarea>
                                     }
                                 </div>
-                            )}
+                            )} */}
                         </div>
                     </div>
                 </>
