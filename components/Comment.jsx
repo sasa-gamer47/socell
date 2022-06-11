@@ -10,10 +10,14 @@ import { BsReplyAll, BsReplyAllFill } from 'react-icons/bs'
 import Image from 'next/image'
 
 
+//! there is an *id* || *_id* which doesn't exists, and I MUST find and fix that error
+//* fixed
+
 
 const Comment = ({ comment, currentUser }) => {
 
     // console.log(comment);
+
 
     const { user, isLoading } = useUser()
     const [isMobile, setIsMobile] = useState(null)
@@ -34,6 +38,8 @@ const Comment = ({ comment, currentUser }) => {
     const [replyContent, setReplyContent] = useState('')
     const replyText = useRef(null)
     const [showReplies, setShowReplies] = useState(false)
+    const [parentComment, setParentComment] = useState(null)
+    const [newReplies, setNewReplies] = useState(null)
 
 
     async function getComment(id) {
@@ -44,6 +50,18 @@ const Comment = ({ comment, currentUser }) => {
     }
 
 
+    async function getParentComment(id) {
+        const response = await fetch(`/api/comment/${id}`)
+        const comment = await response.json()
+
+        console.log('parent comment id: ', id);
+
+
+        setParentComment(comment.data)
+
+        return comment.data
+    }
+
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setIsMobile(window.innerWidth <= 768)
@@ -52,6 +70,13 @@ const Comment = ({ comment, currentUser }) => {
             })
         }
     }, [])
+
+    async function getReplies() {
+    const res = await fetch(`/api/comment/replies/${comment._id}`)
+    const replies = await res.json()
+    // console.log('replies: ', replies);
+    setReplies(replies.data)
+    }
 
     useEffect(() => {
         async function getUser() {
@@ -64,36 +89,99 @@ const Comment = ({ comment, currentUser }) => {
         getUser()
 
         console.log('comment user: ', comment.user);
-
+        console.log(comment);
         
+        
+        if (comment.isReply) {
+            console.log('parent id: ', comment.replyTo);
+            getParentComment(comment.replyTo)
+        }
         // console.log('replies: ', replies);
         
-        comment.replies.forEach(async reply => { 
-            const comment = await getComment(reply)
-            // setReplies(replies => [...replies.filter(reply => reply._id !== reply._id), comment])
+        // comment.replies.forEach(async reply => {
+        //     // console.log('reply id: ', reply);
+        //     // console.log('reply id: ', reply);
+        //     const comment = await getComment(reply)
+        //     // setReplies(replies => [...replies.filter(reply => reply._id !== reply._id), comment])
             
-            setReplies(replies => [...replies, comment])
-            console.log('replies: ', replies);
+        //     setReplies(replies => [...replies, comment])
+        //     console.log('replies: ', replies);
 
-        })
+        // })
+    
+
+        getReplies()
+
     }, [])
     const [usernameSecondChar, setUsernameSecondChar] = useState(null)
+
+    useEffect(() => { 
+        
+        if (parentComment && parentComment.replies.length > 0) {
+            console.log('replies: ', parentComment.replies);
+            
+            const index = parentComment.replies.indexOf(comment._id)
+            console.log(index);
+            parentComment.replies.splice(index, 1)
+            
+            console.log('newer replies: ', parentComment.replies);
+            setNewReplies(parentComment.replies)
+        }
+
+        console.log('new replies: ', newReplies);
+        
+    }, [parentComment])
 
     const deleteComment = async () => {
         // console.log('deleting...');
         // console.log(post)
-        const res = await fetch(`/api/comment/${comment._id}`, {
-            method: 'DELETE',
-        })
+        console.log('deleted comment isReply: ', comment.isReply);
 
-        const data = await res.json()
+        console.log(parentComment.replies);
+        console.log(comment._id);
+        
+        if (comment.isReply) {
+            const index = parentComment.replies.indexOf(comment._id)
+            parentComment.replies.splice(index, 1)
+        
 
-        if (data.success) {
-            // console.log('deleted');
-            // setShowDeleteModal(false)
-            // window.location.reload()
-            router.push({ pathname, query: { ...query, updateComments: true } })
-        }
+        
+            // setNewReplies(parentComment.replies)
+
+            // console.log(newReplies);
+
+            // console.log('deleting comment: ', comment);
+            // console.log(index);
+            // if (newReplies) {
+
+                const updateComment = await fetch(`/api/comment/${comment._id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: comment._id,
+                        repliesCount: replies.length - 1,
+                    }),
+                })
+            }
+            
+            const res = await fetch(`/api/comment/${comment._id}`, {
+                method: 'DELETE',
+            })
+    
+            const data = await res.json()
+    
+            if (data.success) {
+                console.log('deleted');
+                // setShowDeleteModal(false)
+                // window.location.reload()
+                getReplies()
+                router.push({ pathname, query: { ...query, updateComments: true } })
+            }
+        // }
+
+
 
         // console.log(res)
     }
@@ -151,6 +239,8 @@ const Comment = ({ comment, currentUser }) => {
             body: JSON.stringify({
                 id: comment._id,
                 content: editedContent,
+                replies: comment.replies,
+                repliesCount: comment.repliesCount,
             })
 
         })
@@ -296,9 +386,13 @@ const Comment = ({ comment, currentUser }) => {
                     repliesCount: comment.repliesCount + 1,
                 }),
             })
+
+            router.push({ pathname, query: { ...query, updateComments: true } })
         }
 
         console.log('data: ', data);
+
+        getReplies()
 
 
     }
@@ -357,15 +451,6 @@ const Comment = ({ comment, currentUser }) => {
                         </Menu.Button>
                         <Menu.Items>
                         <div className="fixed bottom-14 right-0 z-[60] w-full rounded-lg text-xl drop-shadow-lg sm:absolute sm:-top-0 sm:right-10 sm:z-20 sm:w-fit sm:text-lg">
-                            {isEditing && !isReplying && (
-                                <Menu.Item
-                                    as="div"
-                                    className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                    onClick={() => cancelEditComment()}
-                                    >
-                                    Cancella
-                                </Menu.Item>               
-                            )}             
                             {isReplying && !isEditing && (
                                 <Menu.Item
                                     as="div"
@@ -375,24 +460,40 @@ const Comment = ({ comment, currentUser }) => {
                                     Cancella
                                 </Menu.Item>               
                             )}             
-                            <Menu.Item
-                            as="div"
-                            className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                            >
-                                {mongoDBUser.email === user.email
-                                    ? 
-                                        isEditing 
-                                            ? <p onClick={() => confirmEditComment()}>Conferma</p>
-                                            :
-                                                isReplying
-                                                ? <p onClick={() => {
-                                                    console.log("replying comment...");
-                                                    confirmReplyComment()
-                                                }}>Conferma</p>
-                                                    : <p onClick={() => editComment()}>Modifica</p>
-                                    :   'Segnala'
-                                }
-                            </Menu.Item>
+                            {isReplying && !isEditing && (
+                                <Menu.Item
+                                    as="div"
+                                    className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
+                                    onClick={() => confirmReplyComment()}
+                                    >
+                                    Conferma
+                                </Menu.Item>               
+                            )}             
+                            {isEditing && !isReplying && (
+                                <Menu.Item
+                                    as="div"
+                                    className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
+                                    onClick={() => cancelEditComment()}
+                                    >
+                                    Cancella
+                                </Menu.Item>               
+                            )}                        
+                            {!isReplying && (
+                        
+                                <Menu.Item
+                                as="div"
+                                className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
+                                                >
+                                    {mongoDBUser.email === user.email
+                                        ? 
+                                            isEditing
+                                                ? <p onClick={() => confirmEditComment()}>Conferma</p>
+                                                : <p onClick={() => editComment()}>Modifica</p>
+                                        :   'Segnala'
+                                    }
+                                </Menu.Item>
+                            )}
+                                            
                             <Menu.Item
                             as="div"
                             className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
@@ -451,7 +552,7 @@ const Comment = ({ comment, currentUser }) => {
                     <div className="hover:cursor-pointer" onClick={() => handleReply()}>
                         <div className="flex items-center gap-x-3 text-lg">
                             <BsReplyAll />
-                            <div className="text-sm">{comment.repliesCount}</div>
+                            <div className="text-sm">{replies.length}</div>
                         </div>
                     </div>
                 </div>    
@@ -460,7 +561,7 @@ const Comment = ({ comment, currentUser }) => {
         {showDeleteModal && (
         <>
             <div className="fixed inset-0 z-50 bg-black opacity-50"></div>
-            <div className="fixed z-[60] flex flex-col items-center rounded-xl bg-gray-200 text-center text-lg drop-shadow-lg dark:bg-zinc-800 dark:text-white sm:inset-52">
+            <div className="fixed z-[60] inset-12 inset-y-40 flex flex-col items-center rounded-xl bg-gray-200 text-center text-lg drop-shadow-lg dark:bg-zinc-800 dark:text-white sm:inset-52">
             <p className="my-10 text-3xl">
                 Vuoi davvero eliminare questo commento?
             </p>
@@ -513,7 +614,7 @@ const Comment = ({ comment, currentUser }) => {
                 <>
                     <div className='fixed opacity-50 inset-0 mt-14 z-[70] bg-black'></div>
 
-                    <Comment comment={comment} currentUser={currentUser} />
+                    <Comment key={comment._id} comment={comment} currentUser={currentUser} />
                     <div className="inset-6 bottom-20 top-20 bg-gray-200 dark:bg-zinc-800 fixed z-[70] left-5 flex flex-col w-full mt-5">
                         <div className="flex gap-x-5 items-center w-full absolute drop-shadow-lg top-0 h-12 bg-gray-300 dark:bg-zinc-900">
                             <div onClick={() => setShowReplies(false)}>
@@ -573,3 +674,4 @@ const Comment = ({ comment, currentUser }) => {
 }
 
 export default Comment
+

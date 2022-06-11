@@ -296,21 +296,23 @@ const Post = ({ post }) => {
                                 ? 'Modifica'
                                 : 'Segnala'}
                             </Menu.Item>
+                            {mongoDBUser._id !== post.user &&
+                                <Menu.Item
+                                    as="div"
+                                    className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
+                                >
+                                    Segui
+                                </Menu.Item>
+                            }
                             <Menu.Item
                             as="div"
-                            className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                            >
-                            {mongoDBUser._id !== post.user && <p>Segui</p>}
-                            </Menu.Item>
-                            <Menu.Item
-                            as="div"
-                            className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                            >
-                            Aggiungi ai preferiti
-                            </Menu.Item>
-                            <Menu.Item
-                            as="div"
-                            className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
+                                className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
+                                >
+                                Aggiungi ai preferiti
+                                </Menu.Item>
+                                <Menu.Item
+                                as="div"
+                                className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
                             >
                             Aggiungi a raccolta
                             </Menu.Item>
@@ -412,7 +414,7 @@ const Post = ({ post }) => {
         {showDeleteModal && (
             <>
                 <div className="fixed inset-0 z-50 bg-black opacity-50"></div>
-                <div className="fixed z-[60] flex flex-col items-center rounded-xl bg-gray-200 text-center text-lg drop-shadow-lg dark:bg-zinc-800 dark:text-white sm:inset-52">
+                <div className="fixed z-[60] inset-12 inset-y-40 flex flex-col items-center rounded-xl bg-gray-200 text-center text-lg drop-shadow-lg dark:bg-zinc-800 dark:text-white sm:inset-52">
                 <p className="my-10 text-3xl">
                     Vuoi davvero eliminare questo post?
                 </p>

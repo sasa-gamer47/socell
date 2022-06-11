@@ -25,6 +25,8 @@ export default async (req, res) => {
             break
         case 'PUT':
             try {
+                console.log(req.body);
+
                 const comment = await Comment.findByIdAndUpdate(req.body.id, {
                     $set: {
                         content: req.body.content,
