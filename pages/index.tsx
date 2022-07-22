@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import moment from 'moment'
 import { useUser } from '@auth0/nextjs-auth0'
 import { Post, LoadingScreen } from '../components/'
 import { useState, useEffect, useRef } from 'react'
@@ -21,9 +22,19 @@ const Home: NextPage = () => {
     
     const posts = await res.json()
 
+    posts.data.map((post: any, index: any) => {
+      // console.log(`post ${index}: ${moment(post.createdAt).format("DD MM YYYY hh:mm:ss:SSSS")}`);
+      console.log(`post ${index}: ${Date.parse(post.createdAt)}`);
+      
+    })
+
     // console.log(posts.data);
     
 //{posts.map((post, index) => <Post post={post} key={index} />}
+    
+  // posts.data.sort((b: any, a: any) => moment(a).diff(a) + moment(b).diff(b))
+    posts.data.sort((a: any, b: any) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+    
     setPosts(posts.data)
   }
     

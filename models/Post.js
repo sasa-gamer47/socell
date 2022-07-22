@@ -56,14 +56,19 @@ const postSchema = new mongoose.Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now,
+        // default: Date.now,
         required: true,
     },
     updatedAt: {
         type: Date,
-        default: Date.now,
-        required: true,
+        // default: Date.now,
+        // required: true,
     },
+    tags: {
+        type: [String],
+        default: [],
+        required: true,
+    }
 })
 
 module.exports = mongoose.models.Post || mongoose.model('Post', postSchema)

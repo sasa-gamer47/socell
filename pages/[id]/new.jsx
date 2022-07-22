@@ -30,12 +30,17 @@ const New = () => {
             // console.log('initialazing');
             // }
         }, [])
-        async function getUser() {
+    async function getUser() {
+        if (id) {
             const response = await fetch(`/api/user/${id}`)
             const user = await response.json()
             // console.log('------------');
             // console.log(user);
             setUser(user.data)
+                
+        } else {
+            console.log("user couldn't be retrieved")
+        }
         }
         getUser()
 
@@ -68,6 +73,8 @@ const New = () => {
 
                             // console.log('user: ', user);
 
+                            const currentDate = new Date()
+
                             const data = await fetch('https://api.cloudinary.com/v1_1/dcrsevgpq/image/upload', {
                                 method: 'POST',
                                 body: formData
@@ -86,6 +93,7 @@ const New = () => {
                                             content: content.current.value,
                                             user: id,
                                             comments: [],
+                                            createdAt: currentDate,
                                         }),
                                         headers: {
                                             'content-type': 'application/json'
@@ -149,5 +157,7 @@ const New = () => {
         </div>
     )
 }
+
+
 
 export default New
