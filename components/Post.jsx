@@ -361,7 +361,14 @@ const Post = ({ post }) => {
                         <AiOutlineShareAlt />
                         <div className="text-sm">{post.shares}</div>
                     </div>
+                    </div>
                 </div>
+                <div className='w-full px-2 grid grid-cols-4 gap-y-2 mt-5 sm:grid-cols-3'>
+                        {post.tags.map((tag, index) => (
+                        <div className='w-full h-full flex justify-center items-center'>
+                            <div className='rounded-lg w-fit px-2 py-1 bg-zinc-300 dark:bg-zinc-600 cursor-pointer'>#{tag}</div>
+                        </div>
+                    ))}
                 </div>
                 <div className="mt-3 flex w-full items-center gap-x-2 text-lg">
                 <textarea
