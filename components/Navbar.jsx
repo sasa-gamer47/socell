@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useUser } from '@auth0/nextjs-auth0'
 import Image from 'next/image'
 import { Menu } from '@headlessui/react'
@@ -31,6 +31,8 @@ const Navbar = () => {
     
     const { user, isLoading } = useUser()
     const [mongoDBUser, setMongoDBUser] = useState(null)
+    const [showSearchBar, setShowSearchBar] = useState(false)
+    const searchBar = useRef(null)
     
     if (user && !mongoDBUser) {
         getUser(user, setMongoDBUser)
@@ -59,7 +61,24 @@ const Navbar = () => {
                     )}
                     {!isMobile && (
                         <div className='flex items-center justify-center text-3xl cursor-pointer transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400'>
-                            <RiSearchLine />
+                            {showSearchBar && (
+                                <div className='mr-5 text-xl  flex items-center' >
+                                    <input ref={searchBar} type="text" placeholder='Cerca un post...' className='p-2 bg-gray-100 dark:bg-zinc-800 outline-none' />
+                                    {/* <div className='w-full h-full text-2xl bg-green400'>
+                                        Cerca
+                                    </div> */}
+                                </div>
+                            )}
+                            <RiSearchLine onClick={() => {
+                                setShowSearchBar(!showSearchBar)
+                                if (showSearchBar) {
+                                    if (searchBar.current.value.charAt(0) === '#') {
+                                        router.push({ pathname: `/search/tag/${searchBar.current.value.substring(1)}` })
+                                    } else {
+                                        router.push({ pathname: '/search', query: { q: searchBar.current.value } })
+                                    }
+                                }
+                            }} />
                         </div>
                     )}
                     {!isMobile && mongoDBUser && (

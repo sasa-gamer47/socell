@@ -363,10 +363,12 @@ const Post = ({ post }) => {
                     </div>
                     </div>
                 </div>
-                <div className='w-full px-2 grid grid-cols-4 gap-y-2 mt-5 sm:grid-cols-3'>
-                        {post.tags.map((tag, index) => (
+                <div className='w-full px-2 grid gap-y-2 mt-5 grid-cols-3'>
+                    {post.tags.map((tag, index) => (
                         <div className='w-full h-full flex justify-center items-center'>
-                            <div className='rounded-lg w-fit px-2 py-1 bg-zinc-300 dark:bg-zinc-600 cursor-pointer'>#{tag}</div>
+                            <Link href={`/search/tag/${tag}`}>
+                                <div className='rounded-lg w-fit px-1 sm:px-2 py-1 bg-zinc-300 dark:bg-zinc-600 cursor-pointer transition duration-300 hover:bg-zinc-400 dark:hover:bg-zinc-500'>#{tag}</div>
+                            </Link>
                         </div>
                     ))}
                 </div>
