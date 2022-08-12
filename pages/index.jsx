@@ -1,12 +1,12 @@
-import type { NextPage } from 'next'
+import { NextPage } from 'next'
 import moment from 'moment'
 import { useUser } from '@auth0/nextjs-auth0'
-import { Post, LoadingScreen } from '../components/'
+import { Post, LoadingScreen } from '../components'
 import { useState, useEffect, useRef } from 'react'
 import { RiSearchLine } from 'react-icons/ri'
 import { useRouter } from 'next/router'
 
-const Home: NextPage = () => {
+const Home = () => {
 
 
   const { user, isLoading } = useUser()
@@ -25,7 +25,7 @@ const Home: NextPage = () => {
     
     const posts = await res.json()
 
-    posts.data.map((post: any, index: any) => {
+    posts.data.map((post, index) => {
       // console.log(`post ${index}: ${moment(post.createdAt).format("DD MM YYYY hh:mm:ss:SSSS")}`);
       console.log(`post ${index}: ${Date.parse(post.createdAt)}`);
       
@@ -36,7 +36,7 @@ const Home: NextPage = () => {
 //{posts.map((post, index) => <Post post={post} key={index} />}
     
   // posts.data.sort((b: any, a: any) => moment(a).diff(a) + moment(b).diff(b))
-    posts.data.sort((a: any, b: any) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
+    posts.data.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
     
     setPosts(posts.data)
   }
@@ -71,13 +71,13 @@ const Home: NextPage = () => {
               <input ref={searchBar} type="text" placeholder='Cerca un post...' className='p-2 bg-transparent outline-none w-full' />
               <div onClick={() => {
                 if (searchBar && searchBar.current) {
-                  if (searchBar.current?.value.charAt(0) === '#') {
-                    setShowSearchBar(false)
-                    router.push({ pathname: `/search/tag/${searchBar.current?.value.substring(1)}` })
-                  } else {
-                    setShowSearchBar(false)
-                    router.push({ pathname: '/search', query: { q: searchBar.current?.value } })
-                  }
+                  if (searchBar.current.value.charAt(0) === '#') {
+                      setShowSearchBar(false)
+                      router.push({ pathname: `/search/tag/${searchBar.current.value.substring(1)}` })
+                    } else {
+                      setShowSearchBar(false)
+                      router.push({ pathname: '/search', query: { q: searchBar.current.value } })
+                    }
                 }
               }} className='p-2 text-2xl flex items-center justify-center font-extrabold w-10 cursor-pointer'>
                 <RiSearchLine />
