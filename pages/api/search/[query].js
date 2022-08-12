@@ -26,6 +26,7 @@ export default async (req, res) => {
                     content: {
                         $regex: new RegExp(query)
                     }
+                    
                         
                 })
                 // console.log(posts);

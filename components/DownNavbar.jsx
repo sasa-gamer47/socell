@@ -42,7 +42,7 @@ const DownNavbar = () => {
                 {pathname === '/' ? <TiHome /> : <TiHomeOutline />}
               </div>
             </Link>
-            <div className="flex cursor-pointer items-center justify-center text-2xl transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400">
+            <div onClick={() => router.push({ pathname: '/', query: { showSearchBar: true } })} className="flex cursor-pointer items-center justify-center text-2xl transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400">
               {/* <MdOutlineExplore /> */}
               <RiSearchLine />
             </div>
