@@ -8,6 +8,7 @@ import { useRouter } from 'next/router'
 // import { Cloudinary } from '@cloudinary/url-gen'
 import { getUserById } from '../../utils'
 import { useUser } from '@auth0/nextjs-auth0'
+import Image from 'next/image'
 
 const New = () => {
 
@@ -25,6 +26,10 @@ const New = () => {
     const [tags, setTags] = useState([])
     const [showNewTagContent, setShowNewTagContent] = useState(false)
     const tagContentRef = useRef(null)
+
+    useEffect(() => {
+        console.log('current image: ', image);
+    }, [image])
     // console.log(router);
 
     useEffect(() => {
@@ -86,7 +91,7 @@ const New = () => {
                                 formData.append('upload_preset', 'my-uploads')
 
                                 // console.log('user: ', user);
-
+                                
                                 const currentDate = new Date()
 
                                 const data = await fetch('https://api.cloudinary.com/v1_1/dcrsevgpq/image/upload', {
@@ -97,8 +102,9 @@ const New = () => {
                                     if (data) {
                                         setSuccess(true)
                                         // setUser({...user, posts: [...user.posts, {  })
-
+                                        
                                         // resource type
+                                        setImage(data.secure_url)
 
                                         fetch('/api/post/', {
                                             method: 'POST',
@@ -157,9 +163,26 @@ const New = () => {
 
                         }} className='drop-shadow-lg w-10/12 sm:w-4/12 bg-zinc-200 dark:bg-zinc-700 rounded-lg flex flex-col items-center gap-y-2'>
                             <h1 className='text-3xl font-semibold mb-4 mt-2'>Crea un nuovo post</h1>
-                            <input className='file:rounded-lg file:border-0 file:outline-0 file:bg-zinc-300 dark:file:bg-zinc-600 dark:file:text-white file:p-1 file:px-4 file:text-lg file:mr-5 file:cursor-pointer transition file:duration-300 file:hover:bg-zinc-400 dark:file:hover:bg-zinc-500 ' type="file" name="file" id="file" />
+                            <input onChange={(e) => {
+                                const file = e.currentTarget.files[0]
+                                console.log('current file: ', file);
+                                const reader = new FileReader()
+                                reader.onload = (e) => {
+                                    setImage(e.target.result)
+                                }
+                                reader.readAsDataURL(file)
+
+                            }} className='file:rounded-lg file:border-0 file:outline-0 file:bg-zinc-300 dark:file:bg-zinc-600 dark:file:text-white file:p-1 file:px-4 file:text-lg file:mr-5 file:cursor-pointer transition file:duration-300 file:hover:bg-zinc-400 dark:file:hover:bg-zinc-500 ' type="file" name="file" id="file" />
+                            {image && image !== '' && (
+                                <div className='w-full flex items-center justify-center'>
+                                    <div className='w-1/3f'>
+                                        {/* {console.log('current url', image)} */}
+                                        <img src={image} />
+                                    </div>
+                                </div>
+                            )}
                             <textarea ref={content} name="" id="" className='text-lg resize-y h-40 w-full mt-5 bg-transparent p-3 outline-none rounded-lg' placeholder='Scrivi qui ciò che pensi...'></textarea>
-                            <div className='w-full py-2 px-3 mb-5 grid gap-2 gap-y-1 grid-cols-4'>
+                            <div className='w-full py-2 px-3 mb-5 grid gap-2 gap-y-1 grid-cols-3 sm:grid-cols-4'>
                                 {tags.map((tag, index) => (
                                     <div type="text" className='relative py-2 text-center flex items-center justify-center font-semibold text-sm sm:text-lg dark:text-white bg-zinc-200 dark:bg-zinc-600 drop-shadow-lg rounded-lg transition duration-300 hover:bg-zinc-300 dark:hover:bg-zinc-500'>
                                         {tag}

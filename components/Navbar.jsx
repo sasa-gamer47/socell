@@ -15,9 +15,13 @@ import { useRouter } from 'next/router'
 
 const Navbar = () => {
 
+    
+
     const router = useRouter()
     const { pathname, query } = router
     const [isMobile, setIsMobile] = useState(null)
+    const [suggestions, setSuggestions] = useState([])
+
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setIsMobile(window.innerWidth <= 768)
@@ -27,6 +31,26 @@ const Navbar = () => {
         }
 
     }, [])
+
+    async function getSuggestions(query) {
+        if (query.trim() !== '') {
+            console.log('getting suggestions...');
+            const res = await fetch(`/api/search/suggestions/${query}`)
+            const data = await res.json()
+
+            // setSuggestions(data.data)
+            return data.data
+            
+        }
+    }
+
+    useEffect(() => {
+        if (suggestions.length > 0) {
+            // alert('useEffect')
+        } else {
+            // setSuggestions([])
+        }
+    }, [suggestions])
     
     
     const { user, isLoading } = useUser()
@@ -62,11 +86,57 @@ const Navbar = () => {
                     {!isMobile && (
                         <div className='flex items-center justify-center text-3xl cursor-pointer transition duration-300 hover:text-slate-900 hover:text-zinc-700 dark:text-white dark:hover:text-slate-400'>
                             {showSearchBar && (
-                                <div className='mr-5 text-xl  flex items-center' >
-                                    <input ref={searchBar} type="text" placeholder='Cerca un post...' className='p-2 bg-gray-100 dark:bg-zinc-800 outline-none' />
+                                <div className='relative mr-5 text-xl flex items-center' >
+                                    <input onChange={async (e) => {
+                                        if (e.target.value.trim() !== '') {
+                                            const data = await getSuggestions(e.target.value)
+
+                                            // console.log('searched suggestions: ', data);
+                                            // alert('searched suggestions: ' + JSON.stringify(data));
+
+                                            const MAX_SUGGESTIONS = 9
+                                            const SUGGESTION_LENGTH = 15
+                                        
+                                            if (data.length > 0) {
+                                                let suggestions = []
+                                                if (data.length > MAX_SUGGESTIONS) {
+                                                    for (let i = 0; i < MAX_SUGGESTIONS; i++) {
+                                                        const index = data[i].content.indexOf(e.target.value)
+                                                        if (suggestions.indexOf(data[i].content.substring(index, index + SUGGESTION_LENGTH)) === -1) {
+                                                            suggestions.push(data[i].content.substring(index, index + SUGGESTION_LENGTH))
+                                                            // console.log('suggestion: ', data[i])
+                                                        }
+                                                    }
+                                                } else {
+                                                    for (let i = 0; i < data.length; i++) {
+                                                        const index = data[i].content.indexOf(e.target.value)
+                                                        if (suggestions.indexOf(data[i].content.substring(index, index + SUGGESTION_LENGTH)) === -1) {
+                                                            suggestions.push(data[i].content.substring(index, index + SUGGESTION_LENGTH))
+                                                            // console.log('suggestion: ', data[i])
+                                                        }
+                                                    }
+                                                }
+
+                                                setSuggestions(suggestions)
+                                                // setSuggestions(['first', 'second', 'third'])
+                                                // alert('current suggestions ' + suggestions)
+                                            } else {
+                                                // console.log('no suggestions');
+                                            }
+                                        }
+                                    }} ref={searchBar} type="text" placeholder='Cerca un post...' className='p-2 bg-gray-100 dark:bg-zinc-800 outline-none' />
                                     {/* <div className='w-full h-full text-2xl bg-green400'>
                                         Cerca
                                     </div> */}
+                                    <div className='absolute top-14 bg-gray-100 dark:text-white text-black dark:bg-zinc-800 w-full flex flex-col items-center'>
+                                        {suggestions.map((suggestion, index) => {
+                                            // {alert('suggestion: ' + suggestion)}
+                                            return <div onClick={() => {
+                                                router.push({ pathname: '/search', query: { q: suggestion } })
+                                                setSuggestions([])
+                                            }} className='border-b-2 border-zinc-700 w-full transition duration-300 hover:bg-gray-300 dark:hover:bg-zinc-700 cursor-pointer flex items-center justify-center py-1'>{suggestion}</div>
+                                        })}
+                                    </div>
                                 </div>
                             )}
                             <RiSearchLine onClick={() => {
@@ -75,7 +145,7 @@ const Navbar = () => {
                                     if (searchBar.current.value.charAt(0) === '#') {
                                         router.push({ pathname: `/search/tag/${searchBar.current.value.substring(1)}` })
                                     } else {
-                                        router.push({ pathname: '/search', query: { q: searchBar.current.value } })
+                                        router.push({ pathname: '/search', query: { q: searchBar.current.value.toLowerCase() } })
                                     }
                                 }
                             }} />

@@ -16,6 +16,7 @@ const Home = () => {
   const grid = useRef(null)
   const [showSearchBar, setShowSearchBar] = useState(false)
   const searchBar = useRef(null)
+  const [suggestions, setSuggestions] = useState([])
 
   
   async function getPosts() {
@@ -60,37 +61,116 @@ const Home = () => {
     }
   }, [pathname, query])
 
+  async function getSuggestions(query) {
+    if (query.trim() !== '') {
+      console.log('getting suggestions...')
+      const res = await fetch(`/api/search/suggestions/${query}`)
+      const data = await res.json()
+
+      // setSuggestions(data.data)
+      return data.data
+    }
+  }
+
   return (
     <>
-      <LoadingScreen isLoading={true} />
+      <LoadingScreen
+        isLoading={query.showSearchBar === 'true' ? false : true}
+      />
       <div className="min-h-screen">
         {showSearchBar && (
           <>
-            <div className='fixed z-50 w-full h-full bg-black opacity-60'></div>
-            <div className='absolute z-50 flex items-center top-0 left-0 bg-gray-100 text-xl dark:text-white font-semibold dark:bg-zinc-800 w-full'>
-              <input ref={searchBar} type="text" placeholder='Cerca un post...' className='p-2 bg-transparent outline-none w-full' />
-              <div onClick={() => {
-                if (searchBar && searchBar.current) {
-                  if (searchBar.current.value.charAt(0) === '#') {
-                      setShowSearchBar(false)
-                      router.push({ pathname: `/search/tag/${searchBar.current.value.substring(1)}` })
+            <div className="fixed z-50 h-full w-full bg-black opacity-60"></div>
+            <div className="absolute h-12 top-0 left-0 z-50 flex w-full items-center bg-gray-100 text-xl font-semibold dark:bg-zinc-800 dark:text-white">
+              <input
+                ref={searchBar}
+                type="text"
+                placeholder="Cerca un post..."
+                className="w-full bg-transparent p-2 outline-none"
+                onChange={async (e) => { 
+                  if (e.target.value.trim() !== '') {
+                    const data = await getSuggestions(e.target.value)
+
+                    // console.log('searched suggestions: ', data);
+                    // alert('searched suggestions: ' + JSON.stringify(data));
+
+                    const MAX_SUGGESTIONS = 9
+                    const SUGGESTION_LENGTH = 15
+                
+                    if (data.length > 0) {
+                        let suggestions = []
+                        if (data.length > MAX_SUGGESTIONS) {
+                            for (let i = 0; i < MAX_SUGGESTIONS; i++) {
+                                const index = data[i].content.indexOf(e.target.value)
+                                if (suggestions.indexOf(data[i].content.substring(index, index + SUGGESTION_LENGTH)) === -1) {
+                                    suggestions.push(data[i].content.substring(index, index + SUGGESTION_LENGTH))
+                                    // console.log('suggestion: ', data[i])
+                                }
+                            }
+                        } else {
+                            for (let i = 0; i < data.length; i++) {
+                                const index = data[i].content.indexOf(e.target.value)
+                                if (suggestions.indexOf(data[i].content.substring(index, index + SUGGESTION_LENGTH)) === -1) {
+                                    suggestions.push(data[i].content.substring(index, index + SUGGESTION_LENGTH))
+                                    // console.log('suggestion: ', data[i])
+                                }
+                            }
+                        }
+
+                        setSuggestions(suggestions)
+                        // setSuggestions(['first', 'second', 'third'])
+                        // alert('current suggestions ' + suggestions)
                     } else {
-                      setShowSearchBar(false)
-                      router.push({ pathname: '/search', query: { q: searchBar.current.value } })
+                        // console.log('no suggestions');
                     }
                 }
-              }} className='p-2 text-2xl flex items-center justify-center font-extrabold w-10 cursor-pointer'>
+                }}
+              />
+              <div className="absolute top-12 flex w-full flex-col items-center bg-gray-100 text-black dark:bg-zinc-800 dark:text-white">
+                {suggestions.map((suggestion, index) => {
+                    // {alert('suggestion: ' + suggestion)}
+                    return <div onClick={() => {
+                        router.push({ pathname: '/search', query: { q: suggestion } })
+                        setSuggestions([])
+                    }} className='border-b-2 border-zinc-700 w-full transition duration-300 hover:bg-gray-300 dark:hover:bg-zinc-700 cursor-pointer flex items-center justify-center py-1'>{suggestion}</div>
+                })}
+              </div>
+              <div
+                onClick={() => {
+                  if (searchBar && searchBar.current) {
+                    if (searchBar.current.value.charAt(0) === '#') {
+                      setShowSearchBar(false)
+                      router.push({
+                        pathname: `/search/tag/${searchBar.current.value.substring(
+                          1
+                        )}`,
+                      })
+                    } else {
+                      setShowSearchBar(false)
+                      router.push({
+                        pathname: '/search',
+                        query: { q: searchBar.current.value.toLowerCase() },
+                      })
+                    }
+                  }
+                }}
+                className="flex w-10 cursor-pointer items-center justify-center p-2 text-2xl font-extrabold"
+              >
                 <RiSearchLine />
               </div>
             </div>
           </>
-
         )}
-        <div ref={grid} className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 posts-container absolute z-10 overflow-y-auto my-14 h-full  dark:text-white'>
+        <div
+          ref={grid}
+          className="posts-container absolute z-10 my-14 grid h-full grid-cols-1 overflow-y-auto dark:text-white sm:grid-cols-2 md:grid-cols-3  lg:grid-cols-4"
+        >
           {/*grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 */}
           {!isLoading && (
             <>
-              {posts.map((post, index) => <Post post={post} key={index} />)}
+              {posts.map((post, index) => (
+                <Post post={post} key={index} />
+              ))}
             </>
           )}
         </div>
