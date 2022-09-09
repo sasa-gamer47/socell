@@ -77,11 +77,11 @@ const search = ({ tag }) => {
                 </>
                 ) : (
                 <>
-                    <div className="fixed left-1/2 top-1/2 translate-y-1/2 -translate-x-1/2 text-3xl font-semibold text-gray-500">
+                    <div className="fixed left-1/2 top-1/5 sm:top-1/2 translate-y-1/2 -translate-x-1/2 text-3xl font-semibold text-gray-500">
                     Non abbiamo trovato nessun post con questo tag :-(
                     </div>
                     <>
-                    <div className="fixed gap-y-2 left-1/2 top-3/4 grid grid-cols-7 w-10/12 translate-y-1/2 -translate-x-1/2 a items-center justify-center">
+                    <div className="fixed gap-y-2 left-1/2 top-1/2 gap-x-2 sm:gap-x-1 sm:top-3/4 grid grid-cols-3 sm:grid-cols-7 w-10/12 translate-y-1/2 -translate-x-1/2 items-center justify-center">
                         {randomTags.map((tag, index) => (
                         <>
                             <Link href={`/search/tag/${tag}`}>

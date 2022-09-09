@@ -47,3 +47,7 @@
     float: none;
     break-inside: avoid;
 } */
+
+.drop-shadow-t-lg {
+    box-shadow: 0px -10px 15px 2px rgb(0 0 0 / 10%);
+}

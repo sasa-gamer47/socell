@@ -28,7 +28,6 @@ module.exports = {
       child_process: false,
     }
 
-    return config;
+    return config
   },
-
 }

@@ -50,6 +50,7 @@ const Home = () => {
     getPosts()
   }, [posts])
 
+
   useEffect(() => {
     if (query.updateCreatedComments === 'true') {
             console.log('posts updated');
@@ -80,7 +81,7 @@ const Home = () => {
       <div className="min-h-screen">
         {showSearchBar && (
           <>
-            <div className="fixed z-50 h-full w-full bg-black opacity-60"></div>
+            <div className="fixed z-50 h-full w-full bg-black opacity-60" onClick={() => setShowSearchBar(false)}></div>
             <div className="absolute h-12 top-0 left-0 z-50 flex w-full items-center bg-gray-100 text-xl font-semibold dark:bg-zinc-800 dark:text-white">
               <input
                 ref={searchBar}
@@ -132,7 +133,7 @@ const Home = () => {
                     return <div onClick={() => {
                         router.push({ pathname: '/search', query: { q: suggestion } })
                         setSuggestions([])
-                    }} className='border-b-2 border-zinc-700 w-full transition duration-300 hover:bg-gray-300 dark:hover:bg-zinc-700 cursor-pointer flex items-center justify-center py-1'>{suggestion}</div>
+                    }} className='border-b-2 border-gray-200 black:border-zinc-700 w-full transition duration-300 hover:bg-gray-300 dark:hover:bg-zinc-700 cursor-pointer flex items-center justify-center py-1'>{suggestion}</div>
                 })}
               </div>
               <div

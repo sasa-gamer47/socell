@@ -42,7 +42,7 @@ const search = ({ q }) => {
                             ))}
                         </>
                     ) : 
-                        <div className='left-1/2 top-1/2 translate-y-1/2 text-3xl text-gray-500 font-semibold -translate-x-1/2 fixed '>Non abbiamo trovato nessun post :-(</div>
+                        <div className='left-1/2 top-1/4 sm:top-1/2 translate-y-1/2 text-3xl text-gray-500 font-semibold -translate-x-1/2 fixed '>Non abbiamo trovato nessun post :-(</div>
                     }
                 </>
             </div>

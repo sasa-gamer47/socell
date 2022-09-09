@@ -22,6 +22,8 @@ const Navbar = () => {
     const [isMobile, setIsMobile] = useState(null)
     const [suggestions, setSuggestions] = useState([])
 
+    
+
     useEffect(() => {
         if (typeof window !== 'undefined') {
             setIsMobile(window.innerWidth <= 768)
@@ -60,7 +62,16 @@ const Navbar = () => {
     
     if (user && !mongoDBUser) {
         getUser(user, setMongoDBUser)
+        console.log('user has logged in: ', user)
+
     }
+
+    useEffect(() => {
+        if (mongoDBUser && !mongoDBUser?.hasCompletedLogin) {
+            // console.log('mongo user: ', mongoDBUser);
+            router.push({ pathname: '/completeLogin', query: { id: mongoDBUser._id } })
+        }
+    }, [mongoDBUser])
 
     return (
         <>
@@ -134,7 +145,7 @@ const Navbar = () => {
                                             return <div onClick={() => {
                                                 router.push({ pathname: '/search', query: { q: suggestion } })
                                                 setSuggestions([])
-                                            }} className='border-b-2 border-zinc-700 w-full transition duration-300 hover:bg-gray-300 dark:hover:bg-zinc-700 cursor-pointer flex items-center justify-center py-1'>{suggestion}</div>
+                                            }} className='border-b-2 border-gray-200 black:border-zinc-700 w-full transition duration-300 hover:bg-gray-300 dark:hover:bg-zinc-700 cursor-pointer flex items-center justify-center py-1'>{suggestion}</div>
                                         })}
                                     </div>
                                 </div>
@@ -177,7 +188,7 @@ const Navbar = () => {
                                         </Menu.Button>
                                         <div className='absolute right-1 sm:right-8 text-center'>
                                             <Menu.Items>
-                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'>
+                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-zinc-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'>
                                                     <>
                                                         {mongoDBUser && (
                                                             <Link href={`/api/user/${mongoDBUser._id}`}><p>Profilo</p></Link>
@@ -185,8 +196,8 @@ const Navbar = () => {
                                                         {!mongoDBUser && (<p>Profilo</p>)}
                                                     </>
                                                 </Menu.Item>
-                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'>Impostazioni</Menu.Item>
-                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'>
+                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-zinc-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'>Impostazioni</Menu.Item>
+                                                <Menu.Item as='div' className='transition duration-300 hover:bg-gray-300 dark:hover:bg-zinc-700 cursor-pointer bg-gray-100 dark:bg-zinc-800 py-2 px-4'>
                                                     <a href='/api/auth/logout'>Log out</a>
                                                 </Menu.Item>
                                             </Menu.Items>    

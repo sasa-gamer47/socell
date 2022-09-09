@@ -38,7 +38,22 @@ const userSchema = new mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'Post',
         // required: true,
-    }
+    },
+    directories: {
+        type: [Object],
+        default: [{
+            name: 'Preferiti',
+            images: [],
+            isFavorite: false,
+        }]
+    },
+    favoriteDirectories: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Directory',
+        default: [],
+    },
+    isGoogleLogin: false,
+    hasCompletedLogin: false,
 });
 
 

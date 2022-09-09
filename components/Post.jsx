@@ -244,7 +244,7 @@ const Post = ({ post }) => {
                 {/* {console.log(postUser.name || postUser.username, postUser)} */}
                 <div className="flex items-center py-2">
                 <div className="h-50 relative z-10 ml-5 cursor-pointer overflow-hidden rounded-full">
-                    <Link href={`/api/user/${postUser._id}`}>
+                    <Link href={`/user/${postUser._id}`}>
                     <div>
                         {postUser.picture ? (
                         <Image
@@ -271,7 +271,7 @@ const Post = ({ post }) => {
                     </Link>
                 </div>
                 <div className="flex w-full items-center justify-between px-4">
-                    <Link href={`/api/user/${postUser._id}`}>
+                    <Link href={`/user/${postUser._id}`}>
                     <h1 className="ml-2 cursor-pointer text-xl font-bold">
                         {postUser.name ||
                         postUser.nickname ||
@@ -307,8 +307,53 @@ const Post = ({ post }) => {
                             <Menu.Item
                             as="div"
                                 className="z-20 cursor-pointer bg-gray-50 p-2 px-5 transition duration-300 hover:bg-gray-300 dark:bg-zinc-700 dark:hover:bg-zinc-600 sm:p-1 sm:px-3"
-                                >
-                                Aggiungi ai preferiti
+                                onClick={async () => {
+                                    for (const directory of mongoDBUser.directories) {
+                                        if (directory.name === 'Preferiti') {
+                                            console.log('user profile: ', {
+                                                ...mongoDBUser,
+                                                directories: [
+                                                ...mongoDBUser.directories,
+                                                directory.images.push(post.img),
+                                                ],
+                                            })
+
+                                            if (directory.images.indexOf(post._id) === -1) {
+
+                                                directory.images.push({ id: post._id, img: post.img })
+
+                                                const res = await fetch(`/api/user/${mongoDBUser._id}`, {
+                                                    method: 'PUT',
+                                                    headers: {
+                                                        'Content-Type': 'application/json'
+                                                    },
+                                                    body: JSON.stringify({
+                                                        ...mongoDBUser,
+                                                        directory: directory.images,
+                                                    })
+                                                })
+                                                // console.log('test: ', [
+                                                //   ...directory.images,
+                                                //   {
+                                                //     id: post._id,
+                                                //     img: post.img,
+                                                //   },
+                                                // ])
+                                                const data = await res.json()
+                                                console.log(data);
+                                                if (data.success) {
+                                                    console.log('redirecting by publishing');
+                                                    // router.push({ pathname: `/user/${mongoDBUser._id}`, query: { section: 3 } })
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }}
+                                            >
+                                                <Link href={`/user/${mongoDBUser._id}`} query={{ section: 3 }}>                
+                                    Aggiungi ai preferiti
+                                </Link>
                                 </Menu.Item>
                                 <Menu.Item
                                 as="div"

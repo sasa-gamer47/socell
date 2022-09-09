@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 export function isMobileDevice() {
     if (window !== "undefined") {
         window.addEventListener('resize', () => {
@@ -48,3 +51,33 @@ export function getUserImgColor(nickname) {
 export function randomNumberBetween(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min)
 }
+
+// export function getDirectory(path) {
+//     const getAbsolutePath = (filePath) => {
+//         return path.join(__dirname, filePath)
+//     }
+
+//     const readDir = (dirPath) => {
+//         let dirElements = fs.readdirSync(dirPath)
+//         let result = {
+//         dirs: [],
+//         files: [],
+//         }
+//         for (const el of dirElements) {
+//             try {
+//                 fs.readdirSync(getAbsolutePath(el))
+//                 result.dirs.push(el)
+//             } catch (err) {
+//                 if (err.code === 'ENOTDIR') {
+//                 result.files.push(el)
+//                 }
+//             }
+//         }
+
+//         return JSON.stringify(result)
+//     }
+
+//     // console.log('directory files: ', readDir(__dirname))
+
+//     return readDir(path)
+// }

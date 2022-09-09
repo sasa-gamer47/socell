@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import path from 'path'
 // import base64 from 'base-64'
 // import cloudinary from 'cloudinary'
 // import uploadcare from 'uploadcare-widget'
@@ -9,6 +10,7 @@ import { useRouter } from 'next/router'
 import { getUserById } from '../../utils'
 import { useUser } from '@auth0/nextjs-auth0'
 import Image from 'next/image'
+// import { getDirectory } from '../../utils'
 
 const New = () => {
 
@@ -27,6 +29,10 @@ const New = () => {
     const [showNewTagContent, setShowNewTagContent] = useState(false)
     const tagContentRef = useRef(null)
 
+    
+
+    
+
     useEffect(() => {
         console.log('current image: ', image);
     }, [image])
@@ -37,6 +43,7 @@ const New = () => {
         // if (id) {
             // console.log('initialazing');
             // }
+            // getDirectory()
         }, [])
     async function getUser() {
         if (id) {
